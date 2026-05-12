@@ -1,4 +1,4 @@
-interface ABP_if (input bit clock);
+interface apb_if (input bit clock);
 	logic PCLK;
 	logic PRESETn;
 	logic [2:0] PADDR;
@@ -41,4 +41,4 @@ interface ABP_if (input bit clock);
 	modport APB_DRV_MP (clocking apb_drv_cb);
 	modport APB_MON_MP (clocking apb_mon_cb);
 
-endinterface : APB_if
+endinterface : apb_if

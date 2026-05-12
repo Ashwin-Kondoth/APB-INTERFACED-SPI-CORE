@@ -1,4 +1,4 @@
-interface SPI_if (input bit clock);
+interface spi_if (input bit clock);
 	logic ss;
 	logic sclk;
 	logic mosi;
@@ -23,4 +23,4 @@ interface SPI_if (input bit clock);
 	modport SPI_DRV_MP (clocking spi_drv_cb);
 	modport SPI_MON_MP (clocking spi_mon_cb);
 
-endinterface : SPI_if
+endinterface : spi_if

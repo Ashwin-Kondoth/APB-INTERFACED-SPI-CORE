@@ -10,8 +10,8 @@ FSDB_PATH=/home/cad/eda/SYNOPSYS/VERDI_2022/verdi/T-2022.06-SP1/share/PLI/VCS/LI
 RTL= ../rtl/*
 work= work #library name
 SVTB1= ../tb/top.sv
-INC = +incdir+../tb +incdir+../test +incdir+../APB_agent_top +incdir+../SPI_agent_top 
-SVTB2 = ../test/ram_test_pkg.sv
+INC = +incdir+../tb +incdir+../test +incdir+../APB_master_agent +incdir+../SPI_slave_agent 
+SVTB2 = ../test/test_pkg.sv
 VSIMOPT= -vopt -voptargs=+acc 
 VSIMCOV= -coverage -sva 
 VSIMBATCH1= -c -do  " log -r /* ;coverage save -onexit mem_cov1;run -all; exit"
@@ -54,7 +54,7 @@ sv_cmp_Questa:
 	vlog -work $(work) $(RTL) $(INC) $(SVTB2) $(SVTB1) 	
 	
 run_test_Questa: clean sv_cmp_Questa
-	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH1)  -wlf wave.wlf -l test1.log  -sv_seed random  work.top +UVM_TESTNAME=ram_single_addr_test
+	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH1)  -wlf wave.wlf -l test1.log  -sv_seed random  work.top +UVM_TESTNAME=base_test
 	
 run_test1_Questa: clean sv_cmp_Questa
 	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH2)  -wlf wave1.wlf -l test2.log  -sv_seed random  work.top +UVM_TESTNAME=ram_ten_addr_test

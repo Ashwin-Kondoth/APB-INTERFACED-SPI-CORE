@@ -1,5 +1,5 @@
-class APB_xtn extends uvm_sequence_item;
-    `uvm_object_utils(APB_xtn)
+class apb_xtn extends uvm_sequence_item;
+    `uvm_object_utils(apb_xtn)
 
 	rand bit PRESETn;
 	rand bit [2:0] PADDR;
@@ -7,26 +7,26 @@ class APB_xtn extends uvm_sequence_item;
 	bit PSEL = 1;
 	bit PENABLE = 1;
 	bit [7:0] PWDATA;
-    bit [7:0] PRDATA;
+    	bit [7:0] PRDATA;
 	bit PREADY;
 	bit PSLVERR;
 
-    constraint APB_con {PADRR inside {[0:3],5};
+    constraint apb_con {PADDR inside {[0:3],5};
                         PRESETn dist {0:=1, 1:=9};}
     
-    function new (string name = "APB_xtn");
+    function new (string name = "apb_xtn");
         super.new(name);
     endfunction : new
 
     extern function void do_copy(uvm_object rhs);
     extern function bit do_compare(uvm_object rhs,uvm_comparer comparer);
     extern function void do_print(uvm_printer printer);
-endclass : APB_xtn
+endclass : apb_xtn
 
-function void APB_xtn::do_copy(uvm_object rhs);
-    APB_xtn rhs_;
+function void apb_xtn::do_copy(uvm_object rhs);
+    apb_xtn rhs_;
     if(!$cast(rhs_,rhs))
-        `uvm_fatal("APB_XTN","cast failed for do_copy")
+        `uvm_fatal("apb_XTN","cast failed for do_copy")
     
     super.do_copy(rhs);
     this.PRESETn = rhs_.PRESETn;
@@ -40,10 +40,10 @@ function void APB_xtn::do_copy(uvm_object rhs);
     this.PSLVERR = rhs_.PSLVERR;
 endfunction : do_copy
 
-function bit APB_xtn::do_compare(uvm_object rhs,uvm_comparer comparer);
-    APB_xtn rhs_;
+function bit apb_xtn::do_compare(uvm_object rhs,uvm_comparer comparer);
+    apb_xtn rhs_;
     if(!$cast(rhs_,rhs))
-        `uvm_fatal("APB_XTN","cast failed for do_compare")
+        `uvm_fatal("apb_XTN","cast failed for do_compare")
     
     return super.do_compare(rhs,comparer) &&
     this.PRESETn == rhs_.PRESETn &&
@@ -57,7 +57,7 @@ function bit APB_xtn::do_compare(uvm_object rhs,uvm_comparer comparer);
     this.PSLVERR == rhs_.PSLVERR;
 endfunction : do_compare
 
-function void APB_xtn::do_print(uvm_printer printer);
+function void apb_xtn::do_print(uvm_printer printer);
     super.do_print(printer);
 //                     STRING_NAME     VALUE      SIZE      BASE
     printer.print_field("PRESETn",  this.PRESETn,  1,     UVM_DEC);

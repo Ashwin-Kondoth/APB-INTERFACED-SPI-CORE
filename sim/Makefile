@@ -10,7 +10,7 @@ FSDB_PATH=/home/cad/eda/SYNOPSYS/VERDI_2022/verdi/T-2022.06-SP1/share/PLI/VCS/LI
 RTL= ../rtl/*
 work= work #library name
 SVTB1= ../tb/top.sv
-INC = +incdir+../tb +incdir+../test +incdir+../APB_master_agent +incdir+../SPI_slave_agent 
+INC = +incdir+../tb +incdir+../test +incdir+../APB_slave_agent +incdir+../SPI_master_agent 
 SVTB2 = ../test/test_pkg.sv
 VSIMOPT= -vopt -voptargs=+acc 
 VSIMCOV= -coverage -sva 

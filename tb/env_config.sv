@@ -14,7 +14,7 @@ class env_config extends uvm_object;
 	bit has_scoreboard = 1;
 	bit has_virtual_sequencer = 1;
 	
-	apb_agent_config apb_cfg;
-	spi_agent_config spi_cfg;
+	apb_agent_config apb_cfg[];
+	spi_agent_config spi_cfg[];
 
 endclass : env_config

@@ -4,18 +4,6 @@ class core_env extends uvm_env;
 	apb_agent apb_agth;
 	spi_agent spi_agth;
 	core_sb sbh;
-	env_config cfg;
-	apb_agent_config apb_cfg;
-	spi_agent_config spi_cfg;
-
-	bit has_apb_agent = 1;
-	bit has_spi_agent = 1;	
-	
-	int unsigned num_of_apb_agents = 1;
-	int unsigned num_of_spi_agents = 1;
-
-	bit has_scoreboard = 1;
-	bit has_virtual_sequencer = 1;
 
 	function new(string name = "core_env",uvm_component parent);
 		super.new(name,parent);
@@ -27,10 +15,7 @@ endclass : core_env
 
 function void core_env::build_phase(uvm_phase phase);
 	super.build_phase(phase);
-	if(has_apb_agent)
-		begin
-			apb_agth = apb_agent::type_id::create("abp_agth",this);
-		end
+	apb_agth = apb_agent::type_id::create("abp_agth",this);
 	spi_agth = spi_agent::type_id::create("spi_agth",this);
 	sbh = core_sb::type_id::create("sbh",this);
 endfunction : build_phase

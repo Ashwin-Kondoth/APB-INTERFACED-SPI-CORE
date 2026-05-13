@@ -1,0 +1,90 @@
+class apb_sequence_base extends uvm_sequence #(apb_xtn);
+    `uvm_object_utils(apb_sequence_base)
+
+    function new(string name = "apb_sequence_base");
+        super.new(name);
+    endfunction : new
+
+endclass : apb_sequence_base
+
+class apb_write_sequence extends apb_sequence_base;
+    `uvm_object_utils(apb_write_sequence)
+
+    function new(string name = "apb_write_sequence");
+        super.new(name);
+    endfunction : new
+
+    extern task body;
+
+endclass : apb_write_sequence
+
+task apb_write_sequence::body();
+
+    bit [7:0] CR1;
+    bit [7:0] CR2;
+
+    rand bit [2:0] SPPR;
+    rand bit [2:0] SPR;
+
+    if(!uvm_config_db #(bit[7:0])::get(null,get_full_name,"CR1",CR1))
+        `uvm_fatal("APB_SEQ","get failed for CR1 !!")
+    if(!uvm_config_db #(bit[7:0])::get(null,get_full_name,"CR2",CR2))
+        `uvm_fatal("APB_SEQ","get failed for CR2 !!")
+    
+    repeat(1)
+        begin
+            req = apb_xtn::type_id::create("req");
+            start_item(req);
+            if(!req.randomize() with {PRESETn == 1'b1; PWRITE == 1'b1; PWDATA == CR1; PADDR == 3'b000;})
+                `uvm_fatal("APB_SEQ","randomization failed")
+            finish_item(req);
+        end
+
+    repeat(1)
+        begin
+            req = apb_xtn::type_id::create("req");
+            start_item(req);
+            if(!req.randomize() with {PRESETn == 1'b1; PWRITE == 1'b1; PWDATA == CR2; PADDR == 3'b001;})
+                `uvm_fatal("APB_SEQ","randomization failed")
+            finish_item(req);
+        end
+    repeat(1)
+        begin
+            req = apb_xtn::type_id::create("req");
+            start_item(req);
+            if(!req.randomize() with {PRESETn == 1'b1; PWRITE == 1'b1; SPPR inside {[0:7]}; SPR inside {[0:7]}; PWDATA == {1'b0,SPPR,1'b0,SPR}; PADDR == 3'b010;})
+                `uvm_fatal("APB_SEQ","randomization failed")
+            finish_item(req);
+        end
+    repeat(1)
+        begin
+            req = apb_xtn::type_id::create("req");
+            start_item(req);
+            if(!req.randomize() with {PRESETn == 1'b1; PWRITE == 1'b1; PWDATA == 8'b01010101; PADDR == 3'b101;})
+                `uvm_fatal("APB_SEQ","randomization failed")
+            finish_item(req);
+        end
+endtask : body
+
+class apb_read_sequence extends apb_sequence_base;
+    `uvm_object_utils(apb_read_sequence)
+
+    function new(string name = "apb_read_sequence");
+        super.new(name);
+    endfunction : new
+
+    extern task body;
+
+endclass : apb_read_sequence
+
+task apb_read_sequence::body();
+
+    repeat(1)
+        begin
+            req = apb_xtn::type_id::create("req");
+            start_item(req);
+            if(!req.randomize() with {PRESETn == 1'b1; PWRITE == 1'b0; PADDR == 3'b101;})
+                `uvm_fatal("APB_SEQ","randomization failed")
+            finish_item(req);
+        end
+endtask : body

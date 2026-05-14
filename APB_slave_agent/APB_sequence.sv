@@ -10,6 +10,8 @@ endclass : apb_sequence_base
 class apb_write_sequence extends apb_sequence_base;
     `uvm_object_utils(apb_write_sequence)
 
+    rand bit [2:0] SPPR;
+    rand bit [2:0] SPR;
     function new(string name = "apb_write_sequence");
         super.new(name);
     endfunction : new
@@ -23,8 +25,7 @@ task apb_write_sequence::body();
     bit [7:0] CR1;
     bit [7:0] CR2;
 
-    rand bit [2:0] SPPR;
-    rand bit [2:0] SPR;
+    
 
     if(!uvm_config_db #(bit[7:0])::get(null,get_full_name,"CR1",CR1))
         `uvm_fatal("APB_SEQ","get failed for CR1 !!")

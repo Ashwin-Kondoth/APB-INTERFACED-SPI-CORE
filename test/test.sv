@@ -8,8 +8,8 @@ class base_test extends uvm_test;
 	bit has_apb_agent = 1;
 	bit has_spi_agent = 1;	
 	
-	int unsigned num_of_apb_agents = 1;
-	int unsigned num_of_spi_agents = 1;
+	int unsigned num_of_apb_agents = 2;
+	int unsigned num_of_spi_agents = 2;
 
 	bit has_scoreboard = 1;
 	bit has_virtual_sequencer = 1;
@@ -23,9 +23,7 @@ class base_test extends uvm_test;
 
 	extern function void build_phase(uvm_phase phase);
 	extern function void config_env();
-	extern function void connect_phase(uvm_phase phase);
 	extern function void end_of_elaboration_phase (uvm_phase phase);
-	extern task run_phase(uvm_phase phase);
 	
 endclass : base_test
 
@@ -37,8 +35,8 @@ function void base_test::build_phase(uvm_phase phase);
 				begin
 					apb_cfg[i] = apb_agent_config::type_id::create($sformatf("apb_cfg[%0d]",i));
 					apb_cfg[i].is_active = UVM_ACTIVE;
-					if(!uvm_config_db #(virtual apb_if)::get(this,"",$sformatf("vif[%0d]",i),apb_cfg[i].vif))
-						`uvm_fatal("TEST","get failed for apb_vif")
+					//if(!uvm_config_db #(virtual apb_if)::get(this,"",$sformatf("vif[%0d]",i),apb_cfg[i].vif))
+					//	`uvm_fatal("TEST","get failed for apb_vif")
 					cfg.apb_cfg[i] = apb_cfg[i];
 				end
 		end
@@ -50,8 +48,8 @@ function void base_test::build_phase(uvm_phase phase);
 				begin
 					spi_cfg[i] = spi_agent_config::type_id::create($sformatf("spi_cfg[%0d]",i));
 					spi_cfg[i].is_active = UVM_ACTIVE;
-					if(!uvm_config_db #(virtual spi_if)::get(this,"",$sformatf("vif[%0d]",i),spi_cfg[i].vif))
-						`uvm_fatal("TEST","get failed for spi_vif")
+					//if(!uvm_config_db #(virtual spi_if)::get(this,"",$sformatf("vif[%0d]",i),spi_cfg[i].vif))
+						//`uvm_fatal("TEST","get failed for spi_vif")
 					cfg.spi_cfg[i] = spi_cfg[i];
 				end
 		end
@@ -74,17 +72,31 @@ function void base_test::config_env();
 
 endfunction : config_env
 
-function void base_test::connect_phase(uvm_phase phase);
-	super.connect_phase(phase);
-endfunction : connect_phase
-
 function void base_test::end_of_elaboration_phase(uvm_phase phase);
 	uvm_top.print_topology();
 endfunction : end_of_elaboration_phase
 
-task base_test::run_phase (uvm_phase phase);
-	super.run_phase(phase);
-	phase.raise_objection(this);
-		#10;
-	phase.drop_objection(this);
-endtask : run_phase
+/*class cpha1_cpol1_lsb_test extends base_test;
+	`uvm_component_utils(cpha1_cpol1_lsb_test)
+	
+	bit [7:0] CR1;
+	bit [7:0] CR1	
+	
+	function new(string name = "cpha1_cpol1_lsb_test",uvm_component parent);
+		super.new(name,parent);
+	endfunction : new
+
+	extern function void build_phase(uvm_phase phase);
+	extern function void end_of_elaboration_phase(uvm_phase phase);
+	extern task run_phase(uvm_phase phase);
+endclass : cpha1_cpol1_lsb_test
+
+function void cpha1_cpol1_lsb_test::build_phase(uvm_phase phase);
+	super.build_phase(phase);
+	 = 8'b11111111;
+	bit [7:0] CR2 = 8'b11111111;
+endfunction : build_phase
+
+function void cpha1_cpol1_lsb_test::end_of_elaboration_phase(uvm_phase phase);
+	super.end_of_elaboration_phase(phase);
+endfunction : end_of_elaboration_phase*/

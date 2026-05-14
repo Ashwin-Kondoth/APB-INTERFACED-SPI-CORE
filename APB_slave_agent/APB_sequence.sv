@@ -36,7 +36,7 @@ task apb_write_sequence::body();
         begin
             req = apb_xtn::type_id::create("req");
             start_item(req);
-            if(!req.randomize() with {PRESETn == 1'b1; PWRITE == 1'b1; PWDATA == CR1; PADDR == 3'b000;})
+            if(!req.randomize() with {PRESET_n == 1'b1; PWRITE == 1'b1; PWDATA == CR1; PADDR == 3'b000;})
                 `uvm_fatal("APB_SEQ","randomization failed")
             finish_item(req);
         end
@@ -45,7 +45,7 @@ task apb_write_sequence::body();
         begin
             req = apb_xtn::type_id::create("req");
             start_item(req);
-            if(!req.randomize() with {PRESETn == 1'b1; PWRITE == 1'b1; PWDATA == CR2; PADDR == 3'b001;})
+            if(!req.randomize() with {PRESET_n == 1'b1; PWRITE == 1'b1; PWDATA == CR2; PADDR == 3'b001;})
                 `uvm_fatal("APB_SEQ","randomization failed")
             finish_item(req);
         end
@@ -53,7 +53,7 @@ task apb_write_sequence::body();
         begin
             req = apb_xtn::type_id::create("req");
             start_item(req);
-            if(!req.randomize() with {PRESETn == 1'b1; PWRITE == 1'b1; SPPR inside {[0:7]}; SPR inside {[0:7]}; PWDATA == {1'b0,SPPR,1'b0,SPR}; PADDR == 3'b010;})
+            if(!req.randomize() with {PRESET_n == 1'b1; PWRITE == 1'b1; SPPR inside {[0:7]}; SPR inside {[0:7]}; PWDATA == {1'b0,SPPR,1'b0,SPR}; PADDR == 3'b010;})
                 `uvm_fatal("APB_SEQ","randomization failed")
             finish_item(req);
         end
@@ -61,7 +61,7 @@ task apb_write_sequence::body();
         begin
             req = apb_xtn::type_id::create("req");
             start_item(req);
-            if(!req.randomize() with {PRESETn == 1'b1; PWRITE == 1'b1; PWDATA == 8'b01010101; PADDR == 3'b101;})
+            if(!req.randomize() with {PRESET_n == 1'b1; PWRITE == 1'b1; PWDATA == 8'b01010101; PADDR == 3'b101;})
                 `uvm_fatal("APB_SEQ","randomization failed")
             finish_item(req);
         end
@@ -84,7 +84,7 @@ task apb_read_sequence::body();
         begin
             req = apb_xtn::type_id::create("req");
             start_item(req);
-            if(!req.randomize() with {PRESETn == 1'b1; PWRITE == 1'b0; PADDR == 3'b101;})
+            if(!req.randomize() with {PRESET_n == 1'b1; PWRITE == 1'b0; PADDR == 3'b101;})
                 `uvm_fatal("APB_SEQ","randomization failed")
             finish_item(req);
         end

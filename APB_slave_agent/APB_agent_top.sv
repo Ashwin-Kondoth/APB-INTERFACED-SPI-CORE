@@ -19,7 +19,7 @@ function void apb_agent_top::build_phase(uvm_phase phase);
 			apb_agth = new[cfg.num_of_apb_agents];
 			foreach(apb_agth[i])
 				begin
-					uvm_config_db #(apb_agent_config)::set(this,$sformatf("*.apb_agth[%0d]",i),"apb_agent_config",cfg.apb_cfg[i]);
+					uvm_config_db #(apb_agent_config)::set(this,$sformatf("apb_agth[%0d]",i),"apb_agent_config",cfg.apb_cfg[i]);
 					apb_agth[i] = apb_agent::type_id::create($sformatf("apb_agth[%0d]",i),this);
 				end
 		end

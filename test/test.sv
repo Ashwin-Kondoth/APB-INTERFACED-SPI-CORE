@@ -8,8 +8,8 @@ class base_test extends uvm_test;
 	bit has_apb_agent = 1;
 	bit has_spi_agent = 1;	
 	
-	int unsigned num_of_apb_agents = 2;
-	int unsigned num_of_spi_agents = 2;
+	int unsigned num_of_apb_agents = 1;
+	int unsigned num_of_spi_agents = 1;
 
 	bit has_scoreboard = 1;
 	bit has_virtual_sequencer = 1;
@@ -31,12 +31,13 @@ function void base_test::build_phase(uvm_phase phase);
 	if(has_apb_agent)
 		begin
 			apb_cfg = new[num_of_apb_agents];
+			cfg.apb_cfg = new[num_of_apb_agents];
 			foreach (apb_cfg[i]) 
 				begin
 					apb_cfg[i] = apb_agent_config::type_id::create($sformatf("apb_cfg[%0d]",i));
 					apb_cfg[i].is_active = UVM_ACTIVE;
-					//if(!uvm_config_db #(virtual apb_if)::get(this,"",$sformatf("vif[%0d]",i),apb_cfg[i].vif))
-					//	`uvm_fatal("TEST","get failed for apb_vif")
+					if(!uvm_config_db #(virtual apb_if)::get(this,"",$sformatf("vif[%0d]",i),apb_cfg[i].vif))
+						`uvm_fatal("TEST","get failed for apb_vif")
 					cfg.apb_cfg[i] = apb_cfg[i];
 				end
 		end
@@ -44,12 +45,13 @@ function void base_test::build_phase(uvm_phase phase);
 	if(has_spi_agent)
 		begin
 			spi_cfg = new[num_of_spi_agents];
+			cfg.spi_cfg = new[num_of_spi_agents];
 			foreach (spi_cfg[i]) 
 				begin
 					spi_cfg[i] = spi_agent_config::type_id::create($sformatf("spi_cfg[%0d]",i));
 					spi_cfg[i].is_active = UVM_ACTIVE;
-					//if(!uvm_config_db #(virtual spi_if)::get(this,"",$sformatf("vif[%0d]",i),spi_cfg[i].vif))
-						//`uvm_fatal("TEST","get failed for spi_vif")
+					if(!uvm_config_db #(virtual spi_if)::get(this,"",$sformatf("vif[%0d]",i),spi_cfg[i].vif))
+						`uvm_fatal("TEST","get failed for spi_vif")
 					cfg.spi_cfg[i] = spi_cfg[i];
 				end
 		end

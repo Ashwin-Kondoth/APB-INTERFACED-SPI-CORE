@@ -1,7 +1,7 @@
 class apb_xtn extends uvm_sequence_item;
     `uvm_object_utils(apb_xtn)
 
-	rand bit PRESETn;
+	rand bit PRESET_n;
 	rand bit [2:0] PADDR;
 	rand bit PWRITE;
 	bit PSEL = 1;
@@ -12,7 +12,7 @@ class apb_xtn extends uvm_sequence_item;
 	bit PSLVERR;
 
     constraint apb_con {PADDR inside {[0:3],5};
-                        PRESETn dist {0:=1, 1:=9};}
+                        PRESET_n dist {0:=1, 1:=9};}
     
     function new (string name = "apb_xtn");
         super.new(name);
@@ -29,7 +29,7 @@ function void apb_xtn::do_copy(uvm_object rhs);
         `uvm_fatal("apb_XTN","cast failed for do_copy")
     
     super.do_copy(rhs);
-    this.PRESETn = rhs_.PRESETn;
+    this.PRESET_n = rhs_.PRESET_n;
     this.PADDR = rhs_.PADDR;
     this.PWRITE = rhs_.PWRITE;
     this.PSEL = rhs_.PSEL;
@@ -46,7 +46,7 @@ function bit apb_xtn::do_compare(uvm_object rhs,uvm_comparer comparer);
         `uvm_fatal("apb_XTN","cast failed for do_compare")
     
     return super.do_compare(rhs,comparer) &&
-    this.PRESETn == rhs_.PRESETn &&
+    this.PRESET_n == rhs_.PRESET_n &&
     this.PADDR == rhs_.PADDR &&
     this.PWRITE == rhs_.PWRITE &&
     this.PSEL == rhs_.PSEL &&
@@ -60,7 +60,7 @@ endfunction : do_compare
 function void apb_xtn::do_print(uvm_printer printer);
     super.do_print(printer);
 //                     STRING_NAME     VALUE      SIZE      BASE
-    printer.print_field("PRESETn",  this.PRESETn,  1,     UVM_DEC);
+    printer.print_field("PRESET_n",  this.PRESET_n,  1,     UVM_DEC);
     printer.print_field("PWRITE",   this.PWRITE,   1,     UVM_DEC);
     printer.print_field("PADDR",    this.PADDR,    3,     UVM_DEC);
     printer.print_field("PSEL",     this.PSEL,     1,     UVM_DEC);

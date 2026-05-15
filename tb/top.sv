@@ -22,7 +22,8 @@ module top;
 						   .miso(SPI_IF.miso),
 						   .ss(SPI_IF.ss),
 						   .sclk(SPI_IF.sclk),
-						   .mosi(SPI_IF.mosi));
+						   .mosi(SPI_IF.mosi),
+						   .spi_interrupt_request(APB_IF.spi_interrupt_request));
 
 	initial
 		begin

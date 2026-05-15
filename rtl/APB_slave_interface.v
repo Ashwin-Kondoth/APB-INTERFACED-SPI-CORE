@@ -256,12 +256,14 @@ end
 //APB FSM combinational logic
 always @(*)
 begin
-	apb_next_state = apb_current_state;
+	//apb_next_state = apb_current_state;
 	
 		case(apb_current_state)
 		IDLE : begin
 		if(PSEL_i && !PENABLE_i)
 			apb_next_state = SETUP;
+		else if(PSEL_i && PENABLE_i)
+			apb_next_state = ENABLE;
 		else
 			apb_next_state = IDLE;
 			end
@@ -288,7 +290,7 @@ end
 //SPI FSM combinational logic
 always @(*)
 begin
-		spi_next_state = spi_mode_o;
+		//spi_next_state = spi_mode_o;
 	case(spi_mode_o)
 	RUN : begin
 	if(!SPE)

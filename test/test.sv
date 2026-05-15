@@ -81,7 +81,7 @@ endfunction : end_of_elaboration_phase
 class cpha1_cpol1_lsb_test extends base_test;
 	`uvm_component_utils(cpha1_cpol1_lsb_test)
 	
-	bit [7:0] CR1 = 8'b11111111;
+	bit [7:0] CR1 = 8'b01011111;
 	bit [7:0] CR2 = 8'b00010000;
 	apb_write_sequence apb_wr_seq;
 	apb_read_sequence apb_rd_seq;

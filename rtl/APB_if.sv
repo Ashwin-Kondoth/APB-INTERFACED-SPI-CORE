@@ -9,7 +9,7 @@ interface apb_if (input bit clock);
 	logic [7:0] PRDATA;
 	logic PREADY;
 	logic PSLVERR;
-
+	logic spi_interrupt_request;
 	assign PCLK = clock;
 	
 	clocking apb_drv_cb @(posedge clock);

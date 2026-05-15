@@ -57,7 +57,7 @@ run_test_Questa: clean sv_cmp_Questa
 	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH1)  -wlf wave.wlf -l test1.log  -sv_seed random  work.top +UVM_TESTNAME=base_test
 	
 run_test1_Questa: clean sv_cmp_Questa
-	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH2)  -wlf wave1.wlf -l test2.log  -sv_seed random  work.top +UVM_TESTNAME=ram_ten_addr_test
+	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH2)  -wlf wave1.wlf -l test2.log  -sv_seed random  work.top +UVM_TESTNAME=cpha1_cpol1_lsb_test
 	
 run_test2_Questa: clean sv_cmp_Questa
 	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH3)  -wlf wave2.wlf -l test3.log  -sv_seed random  work.top +UVM_TESTNAME=ram_odd_addr_test

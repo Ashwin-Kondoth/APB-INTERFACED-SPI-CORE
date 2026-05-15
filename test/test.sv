@@ -78,11 +78,13 @@ function void base_test::end_of_elaboration_phase(uvm_phase phase);
 	uvm_top.print_topology();
 endfunction : end_of_elaboration_phase
 
-/*class cpha1_cpol1_lsb_test extends base_test;
+class cpha1_cpol1_lsb_test extends base_test;
 	`uvm_component_utils(cpha1_cpol1_lsb_test)
 	
-	bit [7:0] CR1;
-	bit [7:0] CR1	
+	bit [7:0] CR1 = 8'b11111111;
+	bit [7:0] CR2 = 8'b00010000;
+	apb_write_sequence apb_wr_seq;
+	apb_read_sequence apb_rd_seq;
 	
 	function new(string name = "cpha1_cpol1_lsb_test",uvm_component parent);
 		super.new(name,parent);
@@ -95,10 +97,24 @@ endclass : cpha1_cpol1_lsb_test
 
 function void cpha1_cpol1_lsb_test::build_phase(uvm_phase phase);
 	super.build_phase(phase);
-	 = 8'b11111111;
-	bit [7:0] CR2 = 8'b11111111;
+	uvm_config_db #(bit[7:0])::set(this,"*","CR1",CR1);
+	uvm_config_db #(bit[7:0])::set(this,"*","CR2",CR2);
+	
+	apb_wr_seq = apb_write_sequence::type_id::create("apb_wr_seq");
+	apb_rd_seq = apb_read_sequence::type_id::create("apb_rd_seq");
 endfunction : build_phase
 
 function void cpha1_cpol1_lsb_test::end_of_elaboration_phase(uvm_phase phase);
 	super.end_of_elaboration_phase(phase);
-endfunction : end_of_elaboration_phase*/
+endfunction : end_of_elaboration_phase
+
+task cpha1_cpol1_lsb_test::run_phase(uvm_phase phase);
+	phase.raise_objection(this);
+		fork
+			for(int i = 0;i < cfg.num_of_apb_agents;i++)
+					apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
+			for(int i = 0;i < cfg.num_of_apb_agents;i++)
+					apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+		join
+	phase.drop_objection(this);
+endtask : run_phase

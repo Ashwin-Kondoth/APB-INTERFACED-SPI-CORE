@@ -45,8 +45,9 @@ task spi_driver::run_phase(uvm_phase phase);
 endtask
 
 task spi_driver::drive_to_dut(spi_xtn xtn);
+	$display("spi data to send");
     xtn.print();
-	
+
     if(lsb == 0)
 		xtn.miso = {<<{xtn.miso}};
 
@@ -55,7 +56,6 @@ task spi_driver::drive_to_dut(spi_xtn xtn);
     if (cpol ^ cpha) 
         for (int i = 0; i < 8; i++) 
 			begin
-            	
             	@(negedge vif.sclk);
             	vif.miso <= xtn.miso[i];
     		end

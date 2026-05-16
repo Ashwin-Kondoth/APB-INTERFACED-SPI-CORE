@@ -122,7 +122,354 @@ task cpha1_cpol1_lsb_test::run_phase(uvm_phase phase);
 				spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
 				apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
 			end
-			phase.phase_done.set_drain_time(this,250);
+			//phase.phase_done.set_drain_time(this,250);
+	phase.drop_objection(this);
+
+endtask : run_phase
+
+class cpha0_cpol0_lsb_test extends base_test;
+	`uvm_component_utils(cpha0_cpol0_lsb_test)
+	
+	bit [7:0] CR1 = 8'b11110011;
+	bit [7:0] CR2 = 8'b00010000;
+
+	apb_reset_sequence apb_reset_seq;
+	apb_write_sequence apb_wr_seq;
+	apb_read_sequence apb_rd_seq;
+	spi_write_sequence spi_wr_seq;
+	
+	function new(string name = "cpha0_cpol0_lsb_test",uvm_component parent);
+		super.new(name,parent);
+	endfunction : new
+
+	extern function void build_phase(uvm_phase phase);
+	extern function void end_of_elaboration_phase(uvm_phase phase);
+	extern task run_phase(uvm_phase phase);
+endclass : cpha0_cpol0_lsb_test
+
+function void cpha0_cpol0_lsb_test::build_phase(uvm_phase phase);
+	super.build_phase(phase);
+	uvm_config_db #(bit[7:0])::set(this,"*","CR1",CR1);
+	uvm_config_db #(bit[7:0])::set(this,"*","CR2",CR2);
+	
+	apb_reset_seq = apb_reset_sequence::type_id::create("apb_reset_seq");
+	apb_wr_seq = apb_write_sequence::type_id::create("apb_wr_seq");
+	apb_rd_seq = apb_read_sequence::type_id::create("apb_rd_seq");
+	spi_wr_seq = spi_write_sequence::type_id::create("spi_wr_seq");
+endfunction : build_phase
+
+function void cpha0_cpol0_lsb_test::end_of_elaboration_phase(uvm_phase phase);
+	super.end_of_elaboration_phase(phase);
+endfunction : end_of_elaboration_phase
+
+task cpha0_cpol0_lsb_test::run_phase(uvm_phase phase);
+	phase.raise_objection(this);
+		for(int i = 0;i < cfg.num_of_apb_agents;i++)
+			begin
+				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
+				apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+			end
+			//phase.phase_done.set_drain_time(this,250);
+	phase.drop_objection(this);
+
+endtask : run_phase
+
+class cpha1_cpol0_lsb_test extends base_test;
+	`uvm_component_utils(cpha1_cpol0_lsb_test)
+	
+	bit [7:0] CR1 = 8'b11110111;
+	bit [7:0] CR2 = 8'b00010000;
+
+	apb_reset_sequence apb_reset_seq;
+	apb_write_sequence apb_wr_seq;
+	apb_read_sequence apb_rd_seq;
+	spi_write_sequence spi_wr_seq;
+	
+	function new(string name = "cpha1_cpol0_lsb_test",uvm_component parent);
+		super.new(name,parent);
+	endfunction : new
+
+	extern function void build_phase(uvm_phase phase);
+	extern function void end_of_elaboration_phase(uvm_phase phase);
+	extern task run_phase(uvm_phase phase);
+endclass : cpha1_cpol0_lsb_test
+
+function void cpha1_cpol0_lsb_test::build_phase(uvm_phase phase);
+	super.build_phase(phase);
+	uvm_config_db #(bit[7:0])::set(this,"*","CR1",CR1);
+	uvm_config_db #(bit[7:0])::set(this,"*","CR2",CR2);
+	
+	apb_reset_seq = apb_reset_sequence::type_id::create("apb_reset_seq");
+	apb_wr_seq = apb_write_sequence::type_id::create("apb_wr_seq");
+	apb_rd_seq = apb_read_sequence::type_id::create("apb_rd_seq");
+	spi_wr_seq = spi_write_sequence::type_id::create("spi_wr_seq");
+endfunction : build_phase
+
+function void cpha1_cpol0_lsb_test::end_of_elaboration_phase(uvm_phase phase);
+	super.end_of_elaboration_phase(phase);
+endfunction : end_of_elaboration_phase
+
+task cpha1_cpol0_lsb_test::run_phase(uvm_phase phase);
+	phase.raise_objection(this);
+		for(int i = 0;i < cfg.num_of_apb_agents;i++)
+			begin
+				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
+				apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+			end
+			//phase.phase_done.set_drain_time(this,250);
+	phase.drop_objection(this);
+
+endtask : run_phase
+
+
+class cpha0_cpol1_lsb_test extends base_test;
+	`uvm_component_utils(cpha0_cpol1_lsb_test)
+	
+	bit [7:0] CR1 = 8'b11111011;
+	bit [7:0] CR2 = 8'b00010000;
+
+	apb_reset_sequence apb_reset_seq;
+	apb_write_sequence apb_wr_seq;
+	apb_read_sequence apb_rd_seq;
+	spi_write_sequence spi_wr_seq;
+	
+	function new(string name = "cpha0_cpol1_lsb_test",uvm_component parent);
+		super.new(name,parent);
+	endfunction : new
+
+	extern function void build_phase(uvm_phase phase);
+	extern function void end_of_elaboration_phase(uvm_phase phase);
+	extern task run_phase(uvm_phase phase);
+endclass : cpha0_cpol1_lsb_test
+
+function void cpha0_cpol1_lsb_test::build_phase(uvm_phase phase);
+	super.build_phase(phase);
+	uvm_config_db #(bit[7:0])::set(this,"*","CR1",CR1);
+	uvm_config_db #(bit[7:0])::set(this,"*","CR2",CR2);
+	
+	apb_reset_seq = apb_reset_sequence::type_id::create("apb_reset_seq");
+	apb_wr_seq = apb_write_sequence::type_id::create("apb_wr_seq");
+	apb_rd_seq = apb_read_sequence::type_id::create("apb_rd_seq");
+	spi_wr_seq = spi_write_sequence::type_id::create("spi_wr_seq");
+endfunction : build_phase
+
+function void cpha0_cpol1_lsb_test::end_of_elaboration_phase(uvm_phase phase);
+	super.end_of_elaboration_phase(phase);
+endfunction : end_of_elaboration_phase
+
+task cpha0_cpol1_lsb_test::run_phase(uvm_phase phase);
+	phase.raise_objection(this);
+		for(int i = 0;i < cfg.num_of_apb_agents;i++)
+			begin
+				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
+				apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+			end
+			//phase.phase_done.set_drain_time(this,250);
+	phase.drop_objection(this);
+
+endtask : run_phase
+
+// MSB FIRST TEST cases
+
+class cpha1_cpol1_msb_test extends base_test;
+	`uvm_component_utils(cpha1_cpol1_msb_test)
+	
+	bit [7:0] CR1 = 8'b11111110;
+	bit [7:0] CR2 = 8'b00010000;
+
+	apb_reset_sequence apb_reset_seq;
+	apb_write_sequence apb_wr_seq;
+	apb_read_sequence apb_rd_seq;
+	spi_write_sequence spi_wr_seq;
+	
+	function new(string name = "cpha1_cpol1_msb_test",uvm_component parent);
+		super.new(name,parent);
+	endfunction : new
+
+	extern function void build_phase(uvm_phase phase);
+	extern function void end_of_elaboration_phase(uvm_phase phase);
+	extern task run_phase(uvm_phase phase);
+endclass : cpha1_cpol1_msb_test
+
+function void cpha1_cpol1_msb_test::build_phase(uvm_phase phase);
+	super.build_phase(phase);
+	uvm_config_db #(bit[7:0])::set(this,"*","CR1",CR1);
+	uvm_config_db #(bit[7:0])::set(this,"*","CR2",CR2);
+	
+	apb_reset_seq = apb_reset_sequence::type_id::create("apb_reset_seq");
+	apb_wr_seq = apb_write_sequence::type_id::create("apb_wr_seq");
+	apb_rd_seq = apb_read_sequence::type_id::create("apb_rd_seq");
+	spi_wr_seq = spi_write_sequence::type_id::create("spi_wr_seq");
+endfunction : build_phase
+
+function void cpha1_cpol1_msb_test::end_of_elaboration_phase(uvm_phase phase);
+	super.end_of_elaboration_phase(phase);
+endfunction : end_of_elaboration_phase
+
+task cpha1_cpol1_msb_test::run_phase(uvm_phase phase);
+	phase.raise_objection(this);
+		for(int i = 0;i < cfg.num_of_apb_agents;i++)
+			begin
+				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
+				apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+			end
+			//phase.phase_done.set_drain_time(this,250);
+	phase.drop_objection(this);
+
+endtask : run_phase
+
+class cpha0_cpol0_msb_test extends base_test;
+	`uvm_component_utils(cpha0_cpol0_msb_test)
+	
+	bit [7:0] CR1 = 8'b11110010;
+	bit [7:0] CR2 = 8'b00010000;
+
+	apb_reset_sequence apb_reset_seq;
+	apb_write_sequence apb_wr_seq;
+	apb_read_sequence apb_rd_seq;
+	spi_write_sequence spi_wr_seq;
+	
+	function new(string name = "cpha0_cpol0_msb_test",uvm_component parent);
+		super.new(name,parent);
+	endfunction : new
+
+	extern function void build_phase(uvm_phase phase);
+	extern function void end_of_elaboration_phase(uvm_phase phase);
+	extern task run_phase(uvm_phase phase);
+endclass : cpha0_cpol0_msb_test
+
+function void cpha0_cpol0_msb_test::build_phase(uvm_phase phase);
+	super.build_phase(phase);
+	uvm_config_db #(bit[7:0])::set(this,"*","CR1",CR1);
+	uvm_config_db #(bit[7:0])::set(this,"*","CR2",CR2);
+	
+	apb_reset_seq = apb_reset_sequence::type_id::create("apb_reset_seq");
+	apb_wr_seq = apb_write_sequence::type_id::create("apb_wr_seq");
+	apb_rd_seq = apb_read_sequence::type_id::create("apb_rd_seq");
+	spi_wr_seq = spi_write_sequence::type_id::create("spi_wr_seq");
+endfunction : build_phase
+
+function void cpha0_cpol0_msb_test::end_of_elaboration_phase(uvm_phase phase);
+	super.end_of_elaboration_phase(phase);
+endfunction : end_of_elaboration_phase
+
+task cpha0_cpol0_msb_test::run_phase(uvm_phase phase);
+	phase.raise_objection(this);
+		for(int i = 0;i < cfg.num_of_apb_agents;i++)
+			begin
+				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
+				apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+			end
+			//phase.phase_done.set_drain_time(this,250);
+	phase.drop_objection(this);
+
+endtask : run_phase
+
+class cpha1_cpol0_msb_test extends base_test;
+	`uvm_component_utils(cpha1_cpol0_msb_test)
+	
+	bit [7:0] CR1 = 8'b11110110;
+	bit [7:0] CR2 = 8'b00010000;
+
+	apb_reset_sequence apb_reset_seq;
+	apb_write_sequence apb_wr_seq;
+	apb_read_sequence apb_rd_seq;
+	spi_write_sequence spi_wr_seq;
+	
+	function new(string name = "cpha1_cpol0_msb_test",uvm_component parent);
+		super.new(name,parent);
+	endfunction : new
+
+	extern function void build_phase(uvm_phase phase);
+	extern function void end_of_elaboration_phase(uvm_phase phase);
+	extern task run_phase(uvm_phase phase);
+endclass : cpha1_cpol0_msb_test
+
+function void cpha1_cpol0_msb_test::build_phase(uvm_phase phase);
+	super.build_phase(phase);
+	uvm_config_db #(bit[7:0])::set(this,"*","CR1",CR1);
+	uvm_config_db #(bit[7:0])::set(this,"*","CR2",CR2);
+	
+	apb_reset_seq = apb_reset_sequence::type_id::create("apb_reset_seq");
+	apb_wr_seq = apb_write_sequence::type_id::create("apb_wr_seq");
+	apb_rd_seq = apb_read_sequence::type_id::create("apb_rd_seq");
+	spi_wr_seq = spi_write_sequence::type_id::create("spi_wr_seq");
+endfunction : build_phase
+
+function void cpha1_cpol0_msb_test::end_of_elaboration_phase(uvm_phase phase);
+	super.end_of_elaboration_phase(phase);
+endfunction : end_of_elaboration_phase
+
+task cpha1_cpol0_msb_test::run_phase(uvm_phase phase);
+	phase.raise_objection(this);
+		for(int i = 0;i < cfg.num_of_apb_agents;i++)
+			begin
+				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
+				apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+			end
+			//phase.phase_done.set_drain_time(this,250);
+	phase.drop_objection(this);
+
+endtask : run_phase
+
+
+class cpha0_cpol1_msb_test extends base_test;
+	`uvm_component_utils(cpha0_cpol1_msb_test)
+	
+	bit [7:0] CR1 = 8'b11111010;
+	bit [7:0] CR2 = 8'b00010000;
+
+	apb_reset_sequence apb_reset_seq;
+	apb_write_sequence apb_wr_seq;
+	apb_read_sequence apb_rd_seq;
+	spi_write_sequence spi_wr_seq;
+	
+	function new(string name = "cpha0_cpol1_msb_test",uvm_component parent);
+		super.new(name,parent);
+	endfunction : new
+
+	extern function void build_phase(uvm_phase phase);
+	extern function void end_of_elaboration_phase(uvm_phase phase);
+	extern task run_phase(uvm_phase phase);
+endclass : cpha0_cpol1_msb_test
+
+function void cpha0_cpol1_msb_test::build_phase(uvm_phase phase);
+	super.build_phase(phase);
+	uvm_config_db #(bit[7:0])::set(this,"*","CR1",CR1);
+	uvm_config_db #(bit[7:0])::set(this,"*","CR2",CR2);
+	
+	apb_reset_seq = apb_reset_sequence::type_id::create("apb_reset_seq");
+	apb_wr_seq = apb_write_sequence::type_id::create("apb_wr_seq");
+	apb_rd_seq = apb_read_sequence::type_id::create("apb_rd_seq");
+	spi_wr_seq = spi_write_sequence::type_id::create("spi_wr_seq");
+endfunction : build_phase
+
+function void cpha0_cpol1_msb_test::end_of_elaboration_phase(uvm_phase phase);
+	super.end_of_elaboration_phase(phase);
+endfunction : end_of_elaboration_phase
+
+task cpha0_cpol1_msb_test::run_phase(uvm_phase phase);
+	phase.raise_objection(this);
+		for(int i = 0;i < cfg.num_of_apb_agents;i++)
+			begin
+				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
+				apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+			end
+			//phase.phase_done.set_drain_time(this,250);
 	phase.drop_objection(this);
 
 endtask : run_phase

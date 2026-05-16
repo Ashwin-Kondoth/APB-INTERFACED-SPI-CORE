@@ -14,11 +14,15 @@ INC = +incdir+../tb +incdir+../test +incdir+../APB_slave_agent +incdir+../SPI_ma
 SVTB2 = ../test/test_pkg.sv
 VSIMOPT= -vopt -voptargs=+acc 
 VSIMCOV= -coverage -sva 
+VSIMBATCH= -c -do  " log -r /* ;coverage save -onexit mem_cov;run -all; exit"
 VSIMBATCH1= -c -do  " log -r /* ;coverage save -onexit mem_cov1;run -all; exit"
 VSIMBATCH2= -c -do  " log -r /* ;coverage save -onexit mem_cov2;run -all; exit"
 VSIMBATCH3= -c -do  " log -r /* ;coverage save -onexit mem_cov3;run -all; exit"
 VSIMBATCH4= -c -do  " log -r /* ;coverage save -onexit mem_cov4;run -all; exit"
-
+VSIMBATCH5= -c -do  " log -r /* ;coverage save -onexit mem_cov5;run -all; exit"
+VSIMBATCH6= -c -do  " log -r /* ;coverage save -onexit mem_cov6;run -all; exit"
+VSIMBATCH7= -c -do  " log -r /* ;coverage save -onexit mem_cov7;run -all; exit"
+VSIMBATCH8= -c -do  " log -r /* ;coverage save -onexit mem_cov8;run -all; exit"
 
 help:
 	@echo =============================================================================================================
@@ -54,21 +58,38 @@ sv_cmp_Questa:
 	vlog -work $(work) $(RTL) $(INC) $(SVTB2) $(SVTB1) 	
 	
 run_test_Questa: clean sv_cmp_Questa
-	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH1)  -wlf wave.wlf -l test1.log  -sv_seed random  work.top +UVM_TESTNAME=base_test
+	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH)  -wlf wave.wlf -l test.log  -sv_seed random  work.top +UVM_TESTNAME=base_test
 	
 run_test1_Questa: clean sv_cmp_Questa
-	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH2)  -wlf wave1.wlf -l test2.log  -sv_seed random  work.top +UVM_TESTNAME=cpha1_cpol1_lsb_test
+	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH1)  -wlf wave1.wlf -l test1.log  -sv_seed random  work.top +UVM_TESTNAME=cpha1_cpol1_lsb_test
 	
 run_test2_Questa: clean sv_cmp_Questa
-	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH3)  -wlf wave2.wlf -l test3.log  -sv_seed random  work.top +UVM_TESTNAME=ram_odd_addr_test
+	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH2)  -wlf wave2.wlf -l test2.log  -sv_seed random  work.top +UVM_TESTNAME=cpha0_cpol0_lsb_test
 	
 run_test3_Questa: clean sv_cmp_Questa
-	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH4)  -wlf wave3.wlf -l test4.log  -sv_seed random  work.top +UVM_TESTNAME=ram_even_addr_test
-	
-clean_Questa: 
+	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH3)  -wlf wave3.wlf -l test3.log  -sv_seed random  work.top +UVM_TESTNAME=cpha0_cpol1_lsb_test
+
+run_test4_Questa: clean sv_cmp_Questa
+	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH4)  -wlf wave4.wlf -l test4.log  -sv_seed random  work.top +UVM_TESTNAME=cpha1_cpol0_lsb_test
+
+run_test5_Questa: clean sv_cmp_Questa
+	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH5)  -wlf wave5.wlf -l test5.log  -sv_seed random  work.top +UVM_TESTNAME=cpha1_cpol1_msb_test
+
+run_test6_Questa: clean sv_cmp_Questa
+	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH6)  -wlf wave6.wlf -l test6.log  -sv_seed random  work.top +UVM_TESTNAME=cpha0_cpol0_msb_test
+
+run_test7_Questa: clean sv_cmp_Questa
+	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH7)  -wlf wave7.wlf -l test7.log  -sv_seed random  work.top +UVM_TESTNAME=cpha0_cpol1_msb_test
+
+run_test8_Questa: clean sv_cmp_Questa
+	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH8)  -wlf wave8.wlf -l test8.log  -sv_seed random  work.top +UVM_TESTNAME=cpha1_cpol0_msb_test
+
+clean_Questa:
 	rm -rf transcript* *log* fcover* covhtml* mem_cov* *.wlf modelsim.ini work
 	clear
 
+regress_Questa:
+	make run_test1_Questa run_test2_Questa run_test3_Questa run_test4_Questa run_test5_Questa run_test6_Questa run_test7_Questa run_test8_Questa
 
 view_wave1_Questa: 
 	vsim -view wave.wlf

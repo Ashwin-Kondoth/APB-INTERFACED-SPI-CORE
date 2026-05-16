@@ -45,7 +45,11 @@ task apb_monitor::collect_data();
 		if(xtn.PWRITE)
 			xtn.PWDATA = vif.apb_mon_cb.PWDATA;
 		else
-			xtn.PRDATA = vif.apb_mon_cb.PRDATA;
+			begin
+				xtn.PRDATA = vif.apb_mon_cb.PRDATA;
+				if(xtn.PRDATA != 8'h55)
+					`uvm_fatal("APB_MON","DATA_MISMATCH")
+			end
 	xtn.print();
 	@(vif.apb_mon_cb);
 endtask : collect_data

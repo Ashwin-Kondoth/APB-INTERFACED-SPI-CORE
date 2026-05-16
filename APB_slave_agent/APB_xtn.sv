@@ -66,7 +66,7 @@ function void apb_xtn::do_print(uvm_printer printer);
     printer.print_field("PADDR",    this.PADDR,    3,     UVM_DEC);
     printer.print_field("PSEL",     this.PSEL,     1,     UVM_DEC);
     printer.print_field("PENABLE",  this.PENABLE,  1,     UVM_DEC);
-    printer.print_field("PWDATA",   this.PWDATA,   8,     UVM_DEC);
+    printer.print_field("PWDATA",   this.PWDATA,   8,     UVM_HEX);
     printer.print_field("PRDATA",   this.PRDATA,   8,     UVM_HEX);
     printer.print_field("PREADY",   this.PREADY,   1,     UVM_DEC);
     printer.print_field("PSLVERR",  this.PSLVERR,  1,     UVM_DEC);

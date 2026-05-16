@@ -46,6 +46,6 @@ function void spi_xtn::do_print(uvm_printer printer);
 //                    STRING_NAME      VALUE     SIZE     BASE
     printer.print_field("sclk",      this.sclk,   1,    UVM_DEC);
     printer.print_field("ss",        this.ss,     1,    UVM_DEC);
-    printer.print_field("mosi",      this.mosi,   8,    UVM_DEC);
-    printer.print_field("miso",      this.miso,   8,    UVM_DEC);
+    printer.print_field("mosi",      this.mosi,   8,    UVM_HEX);
+    printer.print_field("miso",      this.miso,   8,    UVM_HEX);
 endfunction : do_print

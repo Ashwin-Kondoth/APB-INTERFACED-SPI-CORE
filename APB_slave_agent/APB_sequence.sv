@@ -7,11 +7,33 @@ class apb_sequence_base extends uvm_sequence #(apb_xtn);
 
 endclass : apb_sequence_base
 
+class apb_reset_sequence extends apb_sequence_base;
+    `uvm_object_utils(apb_reset_sequence)
+
+    function new(string name = "apb_reset_sequence");
+        super.new(name);
+    endfunction : new
+
+    extern task body;
+
+endclass : apb_reset_sequence
+
+task apb_reset_sequence::body();
+
+    repeat(1)
+        begin
+            req = apb_xtn::type_id::create("req");
+            start_item(req);
+            if(!req.randomize() with {PRESET_n == 1'b0;})
+                `uvm_fatal("APB_SEQ","randomization failed")
+            finish_item(req);
+        end
+endtask : body
+
 class apb_write_sequence extends apb_sequence_base;
     `uvm_object_utils(apb_write_sequence)
 	
-    rand bit [2:0] SPPR;
-    rand bit [2:0] SPR;
+    
     bit [7:0] CR1;
     bit [7:0] CR2;
 
@@ -51,7 +73,7 @@ task apb_write_sequence::body();
         begin
             req = apb_xtn::type_id::create("req");
             start_item(req);
-            if(!req.randomize() with {PRESET_n == 1'b1; PWRITE == 1'b1; SPPR inside {[0:7]}; SPR inside {[0:7]}; PWDATA == {1'b0,SPPR,1'b0,SPR}; PADDR == 3'b010;})
+            if(!req.randomize() with {PRESET_n == 1'b1; PWRITE == 1'b1; SPPR == 3'd0; SPR == 3'd1; PWDATA == {1'b0,SPPR,1'b0,SPR}; PADDR == 3'b010;})
                 `uvm_fatal("APB_SEQ","randomization failed")
             finish_item(req);
         end
@@ -59,7 +81,7 @@ task apb_write_sequence::body();
         begin
             req = apb_xtn::type_id::create("req");
             start_item(req);
-            if(!req.randomize() with {PRESET_n == 1'b1; PWRITE == 1'b1; PWDATA == 8'b01010101; PADDR == 3'b101;})
+            if(!req.randomize() with {PRESET_n == 1'b1; PWRITE == 1'b1; PADDR == 3'b101;})
                 `uvm_fatal("APB_SEQ","randomization failed")
             finish_item(req);
         end

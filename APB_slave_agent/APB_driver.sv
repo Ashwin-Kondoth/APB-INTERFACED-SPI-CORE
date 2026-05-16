@@ -36,7 +36,7 @@ task apb_driver::run_phase(uvm_phase phase);
 endtask : run_phase
 
 task apb_driver::drive_to_dut(apb_xtn xtn);
-	xtn.print();
+	//xtn.print();
 	@(vif.apb_drv_cb);
 	vif.apb_drv_cb.PSEL <= '1;
 	vif.apb_drv_cb.PENABLE <= '0; //SETUP phase
@@ -48,16 +48,14 @@ task apb_driver::drive_to_dut(apb_xtn xtn);
 
 	@(vif.apb_drv_cb);
 	vif.apb_drv_cb.PENABLE <= '1; //ENABLE phase
-	
-	$display("DATA SENT");
-	
+	if(xtn.PRESET_n)
 	wait(vif.apb_drv_cb.PREADY) //Transmition done ack
 		if(xtn.PWRITE == 0)
 			begin
 				xtn.PRDATA = vif.apb_drv_cb.PRDATA;
-				`uvm_info("APB DRV",$sformatf("Received PRDATA: %s",xtn.sprint()),UVM_LOW)
+				//`uvm_info("APB DRV",$sformatf("Received PRDATA: %s",xtn.sprint()),UVM_LOW)
 			end
-	$display("DATA transmit done");
+	//$display("DATA transmit done");
 	vif.apb_drv_cb.PSEL <= '0;
 	vif.apb_drv_cb.PENABLE <= '0; //IDLE phase
 endtask : drive_to_dut

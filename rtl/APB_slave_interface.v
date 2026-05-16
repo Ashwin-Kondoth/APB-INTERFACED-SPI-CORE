@@ -122,7 +122,7 @@ begin
 			SPI_CR1 <= SPI_CR1;
 	end
 	else
-		SPI_CR1 <= 8'h04;
+		SPI_CR1 <= SPI_CR1; //to hold the value
 end
 
 assign spiswai_o = SPI_CR2[1];
@@ -140,7 +140,7 @@ begin
 			SPI_CR2 <= SPI_CR2;
 	end
 	else
-		SPI_CR2 <= 8'h00;
+		SPI_CR2 <= SPI_CR2;
 end
 
 assign sppr_o = SPI_BR[6:4];
@@ -158,7 +158,7 @@ begin
 			SPI_BR <= SPI_BR;
 	end
 	else
-		SPI_BR <= 8'h00;
+		SPI_BR <= SPI_BR;
 end
 
 always @(posedge PCLK or negedge PRESET_n)
@@ -256,8 +256,6 @@ end
 //APB FSM combinational logic
 always @(*)
 begin
-	//apb_next_state = apb_current_state;
-	
 		case(apb_current_state)
 		IDLE : begin
 		if(PSEL_i && !PENABLE_i)
@@ -290,7 +288,6 @@ end
 //SPI FSM combinational logic
 always @(*)
 begin
-		//spi_next_state = spi_mode_o;
 	case(spi_mode_o)
 	RUN : begin
 	if(!SPE)

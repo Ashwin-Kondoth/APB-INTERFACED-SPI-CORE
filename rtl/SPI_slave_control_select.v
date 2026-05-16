@@ -65,7 +65,7 @@ begin
 			ss_o <= 1'b0;
 		else
 		begin
-			if(count < target - 1'b1)
+			if(count < target)
 				ss_o <= 1'b0; //keep ss -> 0 till 31st clock-cycles when baudrate is 4 else set it to 1.
 			else
 				ss_o <= 1'b1;
@@ -86,7 +86,7 @@ begin
 			count <= 16'b0;
 		else
 		begin
-			if(count < target - 1'b1) //count till 31st clock cycles when baudrate is 4
+			if(count < target) //count till 31st clock cycles when baudrate is 4
 				count <= count + 1'b1;
 			else
 				count <= 16'hffff;
@@ -108,7 +108,7 @@ begin
 			rcv <= 1'b0;  
 		else
 		begin
-			if(count == target-2'b10)
+			if(count == target-1'b1)
 			rcv <= 1'b1; //set receive data to high after 31st clock cycles and when send_data is 0.
 			else
 			rcv <= 1'b0;

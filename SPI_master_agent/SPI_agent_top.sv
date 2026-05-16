@@ -19,7 +19,7 @@ function void spi_agent_top::build_phase(uvm_phase phase);
 			spi_agth = new[cfg.num_of_spi_agents];
 			foreach(spi_agth[i])
 				begin
-					uvm_config_db #(spi_agent_config)::set(this,$sformatf("spi_agth[%0d]",i),"spi_agent_config",cfg.spi_cfg[i]);
+					uvm_config_db #(spi_agent_config)::set(this,$sformatf("spi_agth[%0d]*",i),"spi_agent_config",cfg.spi_cfg[i]);
 					spi_agth[i] = spi_agent::type_id::create($sformatf("spi_agth[%0d]",i),this);
 				end
 		end

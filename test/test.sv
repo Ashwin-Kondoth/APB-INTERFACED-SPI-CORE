@@ -81,10 +81,13 @@ endfunction : end_of_elaboration_phase
 class cpha1_cpol1_lsb_test extends base_test;
 	`uvm_component_utils(cpha1_cpol1_lsb_test)
 	
-	bit [7:0] CR1 = 8'b01011111;
+	bit [7:0] CR1 = 8'b11111111;
 	bit [7:0] CR2 = 8'b00010000;
+
+	apb_reset_sequence apb_reset_seq;
 	apb_write_sequence apb_wr_seq;
 	apb_read_sequence apb_rd_seq;
+	spi_write_sequence spi_wr_seq;
 	
 	function new(string name = "cpha1_cpol1_lsb_test",uvm_component parent);
 		super.new(name,parent);
@@ -100,8 +103,10 @@ function void cpha1_cpol1_lsb_test::build_phase(uvm_phase phase);
 	uvm_config_db #(bit[7:0])::set(this,"*","CR1",CR1);
 	uvm_config_db #(bit[7:0])::set(this,"*","CR2",CR2);
 	
+	apb_reset_seq = apb_reset_sequence::type_id::create("apb_reset_seq");
 	apb_wr_seq = apb_write_sequence::type_id::create("apb_wr_seq");
 	apb_rd_seq = apb_read_sequence::type_id::create("apb_rd_seq");
+	spi_wr_seq = spi_write_sequence::type_id::create("spi_wr_seq");
 endfunction : build_phase
 
 function void cpha1_cpol1_lsb_test::end_of_elaboration_phase(uvm_phase phase);
@@ -110,11 +115,14 @@ endfunction : end_of_elaboration_phase
 
 task cpha1_cpol1_lsb_test::run_phase(uvm_phase phase);
 	phase.raise_objection(this);
-		fork
-			for(int i = 0;i < cfg.num_of_apb_agents;i++)
-					apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
-			for(int i = 0;i < cfg.num_of_apb_agents;i++)
-					apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
-		join
+		for(int i = 0;i < cfg.num_of_apb_agents;i++)
+			begin
+				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
+				apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+			end
+			phase.phase_done.set_drain_time(this,250);
 	phase.drop_objection(this);
+
 endtask : run_phase

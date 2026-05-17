@@ -53,17 +53,26 @@ task spi_driver::drive_to_dut(spi_xtn xtn);
 
     wait(vif.ss == 0);
 
-    if (cpol ^ cpha) 
-        for (int i = 0; i < 8; i++) 
-			begin
-            	@(negedge vif.sclk);
-            	vif.miso <= xtn.miso[i];
-    		end
+    if (!cpha)
+		begin
+			vif.miso <= xtn.miso[0];
+			for (int i = 1; i < 8; i++) 
+				begin
+					if(cpol ^ cpha)
+						@(posedge vif.sclk);
+					else
+						@(negedge vif.sclk);
+					vif.miso <= xtn.miso[i];
+				end
+		end
 
     else 
         for (int i = 0; i < 8; i++) 
 			begin
-                @(posedge vif.sclk);
+				if(cpol ^ cpha)
+                	@(posedge vif.sclk);
+				else
+					@(negedge vif.sclk);
             	vif.miso <= xtn.miso[i];
         	end
 

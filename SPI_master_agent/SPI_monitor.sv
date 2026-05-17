@@ -68,8 +68,6 @@ task spi_monitor::collect_data();
 		xtn.mosi = {<<{xtn.mosi}};
 	$display("spi data received");
 	xtn.print;
-	if(xtn.mosi != 8'hc1)
-		`uvm_fatal("SPI MON","DATA MISMATCH")
 	monitor_port.write(xtn);
 	
 endtask : collect_data

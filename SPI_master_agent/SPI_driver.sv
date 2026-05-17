@@ -2,7 +2,7 @@ class spi_driver extends uvm_driver #(spi_xtn);
 	`uvm_component_utils(spi_driver)
 
 	spi_agent_config cfg;
-	virtual spi_if.SPI_DRV_MP vif;
+	virtual spi_if vif;
 	bit[7:0] CR1;
 	bit cpol;
 	bit cpha;
@@ -59,10 +59,15 @@ task spi_driver::drive_to_dut(spi_xtn xtn);
 			for (int i = 1; i < 8; i++) 
 				begin
 					if(cpol ^ cpha)
-						@(posedge vif.sclk);
+					begin
+						@(vif.spi_drv_cb_pos);
+						vif.spi_drv_cb_pos.miso <= xtn.miso[i];
+					end
 					else
-						@(negedge vif.sclk);
-					vif.miso <= xtn.miso[i];
+					begin
+						@(vif.spi_drv_cb_neg);
+						vif.spi_drv_cb_neg.miso <= xtn.miso[i];
+					end
 				end
 		end
 
@@ -70,10 +75,15 @@ task spi_driver::drive_to_dut(spi_xtn xtn);
         for (int i = 0; i < 8; i++) 
 			begin
 				if(cpol ^ cpha)
-                	@(posedge vif.sclk);
+				begin
+                	@(vif.spi_drv_cb_pos);
+					vif.spi_drv_cb_pos.miso <= xtn.miso[i];
+				end
 				else
-					@(negedge vif.sclk);
-            	vif.miso <= xtn.miso[i];
+				begin
+					@(vif.spi_drv_cb_neg);
+            		vif.spi_drv_cb_neg.miso <= xtn.miso[i];
+				end
         	end
 
     @(posedge vif.ss);

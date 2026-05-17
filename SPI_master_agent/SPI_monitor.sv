@@ -4,7 +4,7 @@ class spi_monitor extends uvm_monitor;
 	uvm_analysis_port #(spi_xtn) monitor_port;
 	
 	spi_agent_config cfg;
-	virtual spi_if.SPI_MON_MP vif;
+	virtual spi_if vif;
 	bit[7:0] CR1;
 	bit cpol;
 	bit cpha;
@@ -54,20 +54,22 @@ task spi_monitor::collect_data();
 	if (cpol ^ cpha) 
         for (int i = 0; i < 8; i++) 
 			begin
-            	@(negedge vif.sclk);
-            	xtn.mosi[i] = vif.mosi;
+            	@(vif.spi_mon_cb_neg);
+            	xtn.mosi[i] = vif.spi_mon_cb_neg.mosi;
     		end
 
     else 
         for (int i = 0; i < 8; i++) 
 			begin
-                @(posedge vif.sclk);
-            	xtn.mosi[i] = vif.mosi;
+                @(vif.spi_mon_cb_pos);
+            	xtn.mosi[i] = vif.spi_mon_cb_pos.mosi;
         	end
 	if(lsb == 0)
 		xtn.mosi = {<<{xtn.mosi}};
 	$display("spi data received");
 	xtn.print;
+	/*if(xtn.mosi != 8'haa)
+		`uvm_fatal("SPI MON","DATA_MISMATCH")*/
 	monitor_port.write(xtn);
 	
 endtask : collect_data

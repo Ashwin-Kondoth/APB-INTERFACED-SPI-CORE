@@ -73,7 +73,7 @@ task apb_write_sequence::body();
         begin
             req = apb_xtn::type_id::create("req");
             start_item(req);
-            if(!req.randomize() with {PRESET_n == 1'b1; PWRITE == 1'b1; /*SPPR == 3'd0; SPR == 3'd1;*/ PWDATA == {1'b0,SPPR,1'b0,SPR}; PADDR == 3'b010;})
+            if(!req.randomize() with {PRESET_n == 1'b1; PWRITE == 1'b1; /*SPPR == 3'd0; SPR == 3'd0;*/ PWDATA == {1'b0,SPPR,1'b0,SPR}; PADDR == 3'b010;})
                 `uvm_fatal("APB_SEQ","randomization failed")
             finish_item(req);
         end

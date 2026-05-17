@@ -7,7 +7,7 @@ module top;
 	bit clock;
 	int count = 1;
 	apb_if APB_IF(clock);
-	spi_if SPI_IF(clock);
+	spi_if SPI_IF();
 
 	APB_interfaced_SPI DUV(.PCLK(APB_IF.PCLK),
 						   .PRESET_n(APB_IF.PRESET_n),

@@ -91,7 +91,7 @@ begin
 		else if (cpol_i ^ cpha_i) //sampling/transmitting edge logic 1 -> negative edge, 0 -> positive edge
 		begin
 			miso_receive_sclk_o <= 1'b0;
-			if ((sclk_o == 1'b1) && (count == ((BaudRateDivisor_o / 2) - 1'b1))) //sampling done after negative edge of sclk till next positive edge of PCLK
+			if ((sclk_o == 1'b1) && (count == ((BaudRateDivisor_o / 2) - 1'b1)) && (!ss_i)) //sampling done after negative edge of sclk till next positive edge of PCLK
 			begin
 				miso_receive_sclk0_o <= 1'b1;
 			end
@@ -103,9 +103,9 @@ begin
 		else
 		begin
 			miso_receive_sclk0_o <= 1'b0;
-			if ((sclk_o == 1'b0) && (count == ((BaudRateDivisor_o / 2) - 1'b1))) //sampling done after positive edge of sclk till next positive edge of PCLK
+			if ((sclk_o == 1'b0) && (count == ((BaudRateDivisor_o / 2) - 1'b1)) && (!ss_i)) //sampling done after positive edge of sclk till next positive edge of PCLK
 			begin
-				miso_receive_sclk_o <= 1;
+				miso_receive_sclk_o <= 1'b1;
 			end
 			else
 			begin
@@ -125,26 +125,46 @@ begin
 					else if (cpol_i ^ cpha_i)
 					begin
 						mosi_send_sclk0_o <= 1'b0;
-						if ((sclk_o == 1'b0) && (count == ((BaudRateDivisor_o / 2) - 1'b1)) && (!ss_i)) //transfer done before negative edge of sclk till next positive edge of PCLK
-						begin
-							mosi_send_sclk_o <= 1'b1;
-						end
+						if((!ss_i) && (BaudRateDivisor_o == 12'd2)) //TO handle BaudRateDivisor_o = 2 case
+							begin
+								if(sclk_o == 1'b1)
+									mosi_send_sclk_o <= 1'b1;
+								else
+									mosi_send_sclk_o <= 1'b0;
+							end
 						else
-						begin
-							mosi_send_sclk_o <= 1'b0;
-						end
+							begin
+								if ((sclk_o == 1'b0) && (count == ((BaudRateDivisor_o / 2) - 1'b1)) && (!ss_i)) //transfer done before negative edge of sclk till next positive edge of PCLK
+								begin
+									mosi_send_sclk_o <= 1'b1;
+								end
+								else
+								begin
+									mosi_send_sclk_o <= 1'b0;
+								end
+							end
 					end
 					else
 					begin
-						mosi_send_sclk_o <= 1'b0;	
-						if ((sclk_o == 1'b1) && (count == ((BaudRateDivisor_o / 2) - 1'b1)) && (!ss_i)) //transfer done before positive edge of sclk till next positive edge of PCLK
-						begin
-							mosi_send_sclk0_o <= 1'b1;
-						end
+						mosi_send_sclk_o <= 1'b0;
+						if((!ss_i) && (BaudRateDivisor_o == 12'd2))
+							begin
+								if(sclk_o == 1'b0)
+									mosi_send_sclk0_o <= 1'b1;
+								else
+									mosi_send_sclk0_o <= 1'b0;
+							end
 						else
-						begin
-							mosi_send_sclk0_o <= 1'b0;
-						end
+							begin
+								if ((sclk_o == 1'b1) && (count == ((BaudRateDivisor_o / 2) - 1'b1)) && (!ss_i)) //transfer done before positive edge of sclk till next positive edge of PCLK
+								begin
+									mosi_send_sclk0_o <= 1'b1;
+								end
+								else
+								begin
+									mosi_send_sclk0_o <= 1'b0;
+								end
+							end
 					end
 end
 

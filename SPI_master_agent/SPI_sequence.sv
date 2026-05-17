@@ -18,7 +18,7 @@ class spi_write_sequence extends spi_sequence_base;
         repeat(1)
             req = spi_xtn::type_id::create("req");
             start_item(req);
-            if(!req.randomize() with {miso == 8'b10101011;})
+            if(!req.randomize())
                 `uvm_fatal("SPI_SEQ","randomization failed")
             finish_item(req);
     endtask : body

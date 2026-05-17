@@ -45,5 +45,5 @@ wire [1:0] spi_mode_w;
 APB_slave_interface sb4 (PCLK,PRESET_n,PADDR,PWRITE,PSEL,PENABLE,PWDATA,ss,miso_data_w,receive_data_w,tip_w,PRDATA,mstr_w,cpol_w,cpha_w,lsbfe_w,spiswai_w,sppr_w,spr_w,spi_interrupt_request,PREADY,PSLVERR,send_data_w,mosi_data_w,spi_mode_w);
 Baud_rate_generator sb1 (PCLK,PRESET_n,spi_mode_w,spiswai_w,sppr_w,spr_w,cpol_w,cpha_w,ss,sclk,miso_receive_sclk_w,miso_receive_sclk0_w,mosi_send_sclk_w,mosi_send_sclk0_w,BaudRateDivisor_w);
 SPI_slave_control_select sb2 (PCLK,PRESET_n,mstr_w,spiswai_w,spi_mode_w,send_data_w,BaudRateDivisor_w,receive_data_w,ss,tip_w);
-Shift_register sb3 (PCLK,PRESET_n,ss,send_data_w,lsbfe_w,cpha_w,cpol_w,miso_receive_sclk_w,miso_receive_sclk0_w,mosi_send_sclk_w,mosi_send_sclk0_w,mosi_data_w,miso,receive_data_w,mosi,miso_data_w);
+Shift_register sb3 (PCLK,PRESET_n,ss,send_data_w,lsbfe_w,cpha_w,cpol_w,BaudRateDivisor_w,miso_receive_sclk_w,miso_receive_sclk0_w,mosi_send_sclk_w,mosi_send_sclk0_w,mosi_data_w,miso,receive_data_w,mosi,miso_data_w);
 endmodule

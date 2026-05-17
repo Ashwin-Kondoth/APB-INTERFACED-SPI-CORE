@@ -6,6 +6,7 @@ module Shift_register(
     input lsbfe_i,
     input cpha_i,
     input cpol_i,
+    input [11:0] BaudRateDivisor_i,
     input miso_receive_sclk_i,   // High for Mode 0 & Mode 3 sampling
     input miso_receive_sclk0_i,  // High for Mode 1 & Mode 2 sampling
     input mosi_send_sclk_i,      // High for Mode 1 & Mode 2 driving
@@ -39,12 +40,12 @@ always @(posedge PCLK or negedge PRESET_n) begin
     else if (send_data_i) begin
         shift_reg_tx <= data_mosi_i;
         // Pre-drive the very first bit for Mode 0 and Mode 3 immediately on load
-        if ((!cpol_i && !cpha_i) ||(cpol_i && !cpha_i)) begin
+        if ((!cpol_i && !cpha_i) ||(cpol_i && !cpha_i) || (BaudRateDivisor_i == 12'd2)) begin
             mosi_o <= lsbfe_i ? data_mosi_i[0] : data_mosi_i[7];
         end
     end 
     else if (!ss_i) begin
-		if((!cpol_i && !cpha_i) ||(cpol_i && !cpha_i))
+		if((!cpol_i && !cpha_i) ||(cpol_i && !cpha_i) || (BaudRateDivisor_i == 12'd2))
 			begin
 				if (tx_flag && (bit_cnt < 4'd8)) begin
 					if (lsbfe_i) begin

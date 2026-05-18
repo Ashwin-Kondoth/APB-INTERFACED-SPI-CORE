@@ -36,20 +36,31 @@ endtask : run_phase
 task apb_monitor::collect_data();
 	apb_xtn xtn;
 	xtn = apb_xtn::type_id::create("xtn");
-	wait(vif.apb_mon_cb.PENABLE && vif.apb_mon_cb.PREADY)
+	@(vif.apb_mon_cb);
+	if(vif.apb_mon_cb.PRESET_n == 0)
+		begin
+			xtn.PRESET_n = vif.apb_mon_cb.PRESET_n;
+			xtn.PSEL = vif.apb_mon_cb.PSEL;
+			xtn.PENABLE = vif.apb_mon_cb.PENABLE;
+			xtn.PWRITE = vif.apb_mon_cb.PWRITE;
+			xtn.PADDR = vif.apb_mon_cb.PADDR;
+			xtn.PWDATA = vif.apb_mon_cb.PWDATA;
+		end
+	else
+		begin
+		wait(vif.apb_mon_cb.PENABLE && vif.apb_mon_cb.PREADY);
 		xtn.PRESET_n = vif.apb_mon_cb.PRESET_n;
 		xtn.PSEL = vif.apb_mon_cb.PSEL;
 		xtn.PENABLE = vif.apb_mon_cb.PENABLE;
 		xtn.PWRITE = vif.apb_mon_cb.PWRITE;
 		xtn.PADDR = vif.apb_mon_cb.PADDR;
-		if(xtn.PWRITE)
-			xtn.PWDATA = vif.apb_mon_cb.PWDATA;
-		else
+		xtn.PWDATA = vif.apb_mon_cb.PWDATA;
+		end
+		if(!xtn.PWRITE)
 			begin
 				xtn.PRDATA = vif.apb_mon_cb.PRDATA;
-				/*if(xtn.PRDATA != 8'hab)
-					`uvm_fatal("APB MON","DATA_MISMATCH")*/
 			end
-	xtn.print();
-	@(vif.apb_mon_cb);
+	`uvm_info("APB MON",$sformatf("%s",xtn.sprint()),UVM_LOW)
+	monitor_port.write(xtn);
+	
 endtask : collect_data

@@ -15,14 +15,14 @@ SVTB2 = ../test/test_pkg.sv
 VSIMOPT= -vopt -voptargs=+acc 
 VSIMCOV= -coverage -sva 
 VSIMBATCH= -c -do  " log -r /* ;coverage save -onexit mem_cov;run -all; exit"
-VSIMBATCH1= -c -do  " log -r /* ;coverage save -onexit mem_cov1;run -all; exit"
-VSIMBATCH2= -c -do  " log -r /* ;coverage save -onexit mem_cov2;run -all; exit"
-VSIMBATCH3= -c -do  " log -r /* ;coverage save -onexit mem_cov3;run -all; exit"
-VSIMBATCH4= -c -do  " log -r /* ;coverage save -onexit mem_cov4;run -all; exit"
-VSIMBATCH5= -c -do  " log -r /* ;coverage save -onexit mem_cov5;run -all; exit"
-VSIMBATCH6= -c -do  " log -r /* ;coverage save -onexit mem_cov6;run -all; exit"
-VSIMBATCH7= -c -do  " log -r /* ;coverage save -onexit mem_cov7;run -all; exit"
-VSIMBATCH8= -c -do  " log -r /* ;coverage save -onexit mem_cov8;run -all; exit"
+VSIMBATCH1= -c -do  " log -r /* ;coverage save -onexit cov1;run -all; exit"
+VSIMBATCH2= -c -do  " log -r /* ;coverage save -onexit cov2;run -all; exit"
+VSIMBATCH3= -c -do  " log -r /* ;coverage save -onexit cov3;run -all; exit"
+VSIMBATCH4= -c -do  " log -r /* ;coverage save -onexit cov4;run -all; exit"
+VSIMBATCH5= -c -do  " log -r /* ;coverage save -onexit cov5;run -all; exit"
+VSIMBATCH6= -c -do  " log -r /* ;coverage save -onexit cov6;run -all; exit"
+VSIMBATCH7= -c -do  " log -r /* ;coverage save -onexit cov7;run -all; exit"
+VSIMBATCH8= -c -do  " log -r /* ;coverage save -onexit cov8;run -all; exit"
 
 help:
 	@echo =============================================================================================================
@@ -61,35 +61,49 @@ run_test_Questa: clean sv_cmp_Questa
 	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH)  -wlf wave.wlf -l test.log  -sv_seed random  work.top +UVM_TESTNAME=base_test
 	
 run_test1_Questa: clean sv_cmp_Questa
-	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH1)  -wlf wave1.wlf -l test1.log  -sv_seed random  work.top +UVM_TESTNAME=cpha1_cpol1_lsb_test
-	
+	vsim -cvgperinstance $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH1)  -wlf wave1.wlf -l test1.log  -sv_seed 1701173238  work.top +UVM_TESTNAME=cpha1_cpol1_lsb_test
+	vcover report  -cvg  -details -nocompactcrossbins -codeAll -assert -directive -html cov1
+
 run_test2_Questa: clean sv_cmp_Questa
-	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH2)  -wlf wave2.wlf -l test2.log  -sv_seed random  work.top +UVM_TESTNAME=cpha0_cpol0_lsb_test
-	
+	vsim -cvgperinstance $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH2)  -wlf wave2.wlf -l test2.log  -sv_seed 709218636  work.top +UVM_TESTNAME=cpha0_cpol0_lsb_test
+	vcover report  -cvg  -details -nocompactcrossbins -codeAll -assert -directive -html cov2
+
 run_test3_Questa: clean sv_cmp_Questa
-	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH3)  -wlf wave3.wlf -l test3.log  -sv_seed random  work.top +UVM_TESTNAME=cpha0_cpol1_lsb_test
+	vsim -cvgperinstance $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH3)  -wlf wave3.wlf -l test3.log  -sv_seed 1392890260  work.top +UVM_TESTNAME=cpha0_cpol1_lsb_test
+	vcover report  -cvg  -details -nocompactcrossbins -codeAll -assert -directive -html cov3
 
 run_test4_Questa: clean sv_cmp_Questa
-	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH4)  -wlf wave4.wlf -l test4.log  -sv_seed random  work.top +UVM_TESTNAME=cpha1_cpol0_lsb_test
+	vsim -cvgperinstance $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH4)  -wlf wave4.wlf -l test4.log  -sv_seed 1403375676  work.top +UVM_TESTNAME=cpha1_cpol0_lsb_test
+	vcover report  -cvg  -details -nocompactcrossbins -codeAll -assert -directive -html cov4
 
 run_test5_Questa: clean sv_cmp_Questa
-	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH5)  -wlf wave5.wlf -l test5.log  -sv_seed random  work.top +UVM_TESTNAME=cpha1_cpol1_msb_test
+	vsim -cvgperinstance $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH5)  -wlf wave5.wlf -l test5.log  -sv_seed 1659229092  work.top +UVM_TESTNAME=cpha1_cpol1_msb_test
+	vcover report  -cvg  -details -nocompactcrossbins -codeAll -assert -directive -html cov5
 
 run_test6_Questa: clean sv_cmp_Questa
-	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH6)  -wlf wave6.wlf -l test6.log  -sv_seed random  work.top +UVM_TESTNAME=cpha0_cpol0_msb_test
+	vsim -cvgperinstance $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH6)  -wlf wave6.wlf -l test6.log  -sv_seed 455463596  work.top +UVM_TESTNAME=cpha0_cpol0_msb_test
+	vcover report  -cvg  -details -nocompactcrossbins -codeAll -assert -directive -html cov6
 
 run_test7_Questa: clean sv_cmp_Questa
-	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH7)  -wlf wave7.wlf -l test7.log  -sv_seed random  work.top +UVM_TESTNAME=cpha0_cpol1_msb_test
+	vsim -cvgperinstance $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH7)  -wlf wave7.wlf -l test7.log  -sv_seed 1267064340  work.top +UVM_TESTNAME=cpha0_cpol1_msb_test
+	vcover report  -cvg  -details -nocompactcrossbins -codeAll -assert -directive -html cov7
 
 run_test8_Questa: clean sv_cmp_Questa
-	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH8)  -wlf wave8.wlf -l test8.log  -sv_seed random  work.top +UVM_TESTNAME=cpha1_cpol0_msb_test
+	vsim -cvgperinstance $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH8)  -wlf wave8.wlf -l test8.log  -sv_seed 392552156  work.top +UVM_TESTNAME=cpha1_cpol0_msb_test
+	vcover report  -cvg  -details -nocompactcrossbins -codeAll -assert -directive -html cov8
 
 clean_Questa:
-	rm -rf transcript* *log* fcover* covhtml* mem_cov* *.wlf modelsim.ini work
+	rm -rf transcript* *log* fcover* covhtml* cov* *.wlf modelsim.ini work
 	clear
 
-regress_Questa:
-	make run_test1_Questa run_test2_Questa run_test3_Questa run_test4_Questa run_test5_Questa run_test6_Questa run_test7_Questa run_test8_Questa
+regress_Questa: run_test1_Questa run_test2_Questa run_test3_Questa run_test4_Questa run_test5_Questa run_test6_Questa run_test7_Questa run_test8_Questa report_Questa cov_Questa
+
+report_Questa:
+	vcover merge cov.ucdb cov_generated.ucdb  cov1 cov2 cov3 cov4 cov5 cov6 cov7 cov8
+	vcover report -cvg -details -nocompactcrossbins -codeAll -assert -directive -html cov.ucdb
+
+cov_Questa:
+	firefox covhtmlreport/index.html&
 
 view_wave1_Questa: 
 	vsim -view wave.wlf

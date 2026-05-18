@@ -55,6 +55,7 @@ task spi_monitor::collect_data();
         for (int i = 0; i < 8; i++) 
 			begin
             	@(vif.spi_mon_cb_neg);
+				xtn.miso[i] = vif.spi_mon_cb_neg.miso;
             	xtn.mosi[i] = vif.spi_mon_cb_neg.mosi;
     		end
 
@@ -62,14 +63,17 @@ task spi_monitor::collect_data();
         for (int i = 0; i < 8; i++) 
 			begin
                 @(vif.spi_mon_cb_pos);
+				xtn.miso[i] = vif.spi_mon_cb_pos.miso;
             	xtn.mosi[i] = vif.spi_mon_cb_pos.mosi;
         	end
 	if(lsb == 0)
-		xtn.mosi = {<<{xtn.mosi}};
-	$display("spi data received");
+		begin
+			xtn.mosi = {<<{xtn.mosi}};
+			xtn.miso = {<<{xtn.miso}};
+		end
 	xtn.print;
 	/*if(xtn.mosi != 8'haa)
 		`uvm_fatal("SPI MON","DATA_MISMATCH")*/
 	monitor_port.write(xtn);
-	
+	wait(vif.ss == 1);
 endtask : collect_data

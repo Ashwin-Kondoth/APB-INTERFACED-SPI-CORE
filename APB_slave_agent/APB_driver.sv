@@ -36,8 +36,6 @@ task apb_driver::run_phase(uvm_phase phase);
 endtask : run_phase
 
 task apb_driver::drive_to_dut(apb_xtn xtn);
-	//xtn.print();
-	@(vif.apb_drv_cb);
 	vif.apb_drv_cb.PSEL <= '1;
 	vif.apb_drv_cb.PENABLE <= '0; //SETUP phase
 	vif.apb_drv_cb.PADDR <= xtn.PADDR;
@@ -58,4 +56,5 @@ task apb_driver::drive_to_dut(apb_xtn xtn);
 	//$display("DATA transmit done");
 	vif.apb_drv_cb.PSEL <= '0;
 	vif.apb_drv_cb.PENABLE <= '0; //IDLE phase
+	@(vif.apb_drv_cb);
 endtask : drive_to_dut

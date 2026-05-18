@@ -45,7 +45,6 @@ task spi_driver::run_phase(uvm_phase phase);
 endtask
 
 task spi_driver::drive_to_dut(spi_xtn xtn);
-	$display("spi data to send");
     xtn.print();
 
     if(lsb == 0)

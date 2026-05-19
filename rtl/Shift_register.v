@@ -15,7 +15,7 @@ module Shift_register(
     input miso_i,
     input receive_data_i,
     output reg mosi_o,
-    output wire [7:0] data_miso_o
+    output reg [7:0] data_miso_o
     );
      
 reg [7:0] shift_reg_tx;
@@ -27,8 +27,15 @@ wire rx_flag = (cpol_i ^ cpha_i) ? miso_receive_sclk0_i : miso_receive_sclk_i;
 wire tx_flag = (cpol_i ^ cpha_i) ? mosi_send_sclk_i     : mosi_send_sclk0_i;
 
 // Assign parallel output to read register
-assign data_miso_o = (receive_data_i) ? shift_reg_rx : 8'h00;
-
+//assign data_miso_o = (receive_data_i) ? shift_reg_rx : 8'h00;
+always @(*) begin
+	if (!PRESET_n)
+		data_miso_o <= 8'b0;
+	else if(receive_data_i)
+		data_miso_o <= shift_reg_rx;
+	else
+		data_miso_o <= data_miso_o;
+end
 //==========================================================
 // 1. MOSI Transmit (TX) Logic
 //==========================================================

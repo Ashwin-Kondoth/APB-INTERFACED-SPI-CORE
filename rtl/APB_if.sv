@@ -39,6 +39,6 @@ interface apb_if (input bit clock);
 	endclocking : apb_mon_cb
 
 	modport APB_DRV_MP (clocking apb_drv_cb);
-	modport APB_MON_MP (clocking apb_mon_cb);
+	modport APB_MON_MP (clocking apb_mon_cb, input PRESET_n);
 
 endinterface : apb_if

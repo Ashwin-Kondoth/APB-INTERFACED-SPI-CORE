@@ -58,15 +58,15 @@ task spi_driver::drive_to_dut(spi_xtn xtn);
 			for (int i = 1; i < 8; i++) 
 				begin
 					if(cpol ^ cpha)
-					begin
-						@(vif.spi_drv_cb_pos);
-						vif.spi_drv_cb_pos.miso <= xtn.miso[i];
-					end
+						begin
+							@(vif.spi_drv_cb_pos);
+							vif.spi_drv_cb_pos.miso <= xtn.miso[i];
+						end
 					else
-					begin
-						@(vif.spi_drv_cb_neg);
-						vif.spi_drv_cb_neg.miso <= xtn.miso[i];
-					end
+						begin
+							@(vif.spi_drv_cb_neg);
+							vif.spi_drv_cb_neg.miso <= xtn.miso[i];
+						end
 				end
 		end
 
@@ -74,15 +74,15 @@ task spi_driver::drive_to_dut(spi_xtn xtn);
         for (int i = 0; i < 8; i++) 
 			begin
 				if(cpol ^ cpha)
-				begin
-                	@(vif.spi_drv_cb_pos);
-					vif.spi_drv_cb_pos.miso <= xtn.miso[i];
-				end
+					begin
+                		@(vif.spi_drv_cb_pos);
+						vif.spi_drv_cb_pos.miso <= xtn.miso[i];
+					end
 				else
-				begin
-					@(vif.spi_drv_cb_neg);
-            		vif.spi_drv_cb_neg.miso <= xtn.miso[i];
-				end
+					begin
+						@(vif.spi_drv_cb_neg);
+            			vif.spi_drv_cb_neg.miso <= xtn.miso[i];
+					end
         	end
 
     @(posedge vif.ss);

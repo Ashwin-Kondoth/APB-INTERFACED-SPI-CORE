@@ -14,7 +14,7 @@ INC = +incdir+../tb +incdir+../test +incdir+../APB_slave_agent +incdir+../SPI_ma
 SVTB2 = ../test/test_pkg.sv
 VSIMOPT= -vopt -voptargs=+acc 
 VSIMCOV= -coverage -sva 
-VSIMBATCH= -c -do  " log -r /* ;coverage save -onexit mem_cov;run -all; exit"
+VSIMBATCH= -c -do  " log -r /* ;coverage save -onexit cov0;run -all; exit"
 VSIMBATCH1= -c -do  " log -r /* ;coverage save -onexit cov1;run -all; exit"
 VSIMBATCH2= -c -do  " log -r /* ;coverage save -onexit cov2;run -all; exit"
 VSIMBATCH3= -c -do  " log -r /* ;coverage save -onexit cov3;run -all; exit"
@@ -41,7 +41,7 @@ help:
 
 clean : clean_$(SIMULATOR)
 sv_cmp : sv_cmp_$(SIMULATOR)
-run_test : run_test_$(SIMULATOR)
+run_reset : run_reset_$(SIMULATOR)
 run_test1 : run_test1_$(SIMULATOR)
 run_test2 : run_test2_$(SIMULATOR)
 run_test3 : run_test3_$(SIMULATOR)
@@ -56,10 +56,14 @@ sv_cmp_Questa:
 	vlib $(work)
 	vmap work $(work)
 	vlog -work $(work) $(RTL) $(INC) $(SVTB2) $(SVTB1) 	
+
+run_lp_Questa: clean sv_cmp_Questa
+	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH)  -wlf wave_lp.wlf -l lptest.log  -sv_seed random work.top +UVM_TESTNAME=low_power_test
 	
-run_test_Questa: clean sv_cmp_Questa
-	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH)  -wlf wave.wlf -l test.log  -sv_seed random  work.top +UVM_TESTNAME=base_test
-	
+run_reset_Questa: clean sv_cmp_Questa
+	vsim  -cvgperinstance $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH)  -wlf wave.wlf -l test.log  -sv_seed 4249856925 work.top +UVM_TESTNAME=reset_test
+	vcover report  -cvg  -details -nocompactcrossbins -codeAll -assert -directive -html cov0
+
 run_test1_Questa: clean sv_cmp_Questa
 	vsim -cvgperinstance $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH1)  -wlf wave1.wlf -l test1.log  -sv_seed 1701173238  work.top +UVM_TESTNAME=cpha1_cpol1_lsb_test
 	vcover report  -cvg  -details -nocompactcrossbins -codeAll -assert -directive -html cov1
@@ -96,10 +100,10 @@ clean_Questa:
 	rm -rf transcript* *log* fcover* covhtml* cov* *.wlf modelsim.ini work
 	clear
 
-regress_Questa: run_test1_Questa run_test2_Questa run_test3_Questa run_test4_Questa run_test5_Questa run_test6_Questa run_test7_Questa run_test8_Questa report_Questa cov_Questa
+regress_Questa: run_reset_Questa run_test1_Questa run_test2_Questa run_test3_Questa run_test4_Questa run_test5_Questa run_test6_Questa run_test7_Questa run_test8_Questa report_Questa cov_Questa
 
 report_Questa:
-	vcover merge cov.ucdb cov_generated.ucdb  cov1 cov2 cov3 cov4 cov5 cov6 cov7 cov8
+	vcover merge cov.ucdb cov_generated.ucdb  cov0 cov1 cov2 cov3 cov4 cov5 cov6 cov7 cov8
 	vcover report -cvg -details -nocompactcrossbins -codeAll -assert -directive -html cov.ucdb
 
 cov_Questa:

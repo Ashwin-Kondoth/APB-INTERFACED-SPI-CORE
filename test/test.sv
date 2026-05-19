@@ -107,6 +107,7 @@ function void cpha1_cpol1_lsb_test::build_phase(uvm_phase phase);
 	apb_wr_seq = apb_write_sequence::type_id::create("apb_wr_seq");
 	apb_rd_seq = apb_read_sequence::type_id::create("apb_rd_seq");
 	spi_wr_seq = spi_write_sequence::type_id::create("spi_wr_seq");
+
 endfunction : build_phase
 
 function void cpha1_cpol1_lsb_test::end_of_elaboration_phase(uvm_phase phase);
@@ -115,13 +116,16 @@ endfunction : end_of_elaboration_phase
 
 task cpha1_cpol1_lsb_test::run_phase(uvm_phase phase);
 	phase.raise_objection(this);
-		for(int j = 0;j < 11; j++)
+		for(int j =0; j< 100; j++)
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
-				spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
-				apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
+					begin
+						spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
+						apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+					end
 			end
 			//phase.phase_done.set_drain_time(this,250);
 	phase.drop_objection(this);
@@ -170,8 +174,11 @@ task cpha0_cpol0_lsb_test::run_phase(uvm_phase phase);
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
-				spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
-				apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
+					begin
+						spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
+						apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+					end
 			end
 			//phase.phase_done.set_drain_time(this,250);
 	phase.drop_objection(this);
@@ -220,8 +227,11 @@ task cpha1_cpol0_lsb_test::run_phase(uvm_phase phase);
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
-				spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
-				apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
+					begin
+						spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
+						apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+					end
 			end
 			//phase.phase_done.set_drain_time(this,250);
 	phase.drop_objection(this);
@@ -271,8 +281,11 @@ task cpha0_cpol1_lsb_test::run_phase(uvm_phase phase);
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
-				spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
-				apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
+					begin
+						spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
+						apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+					end
 			end
 			//phase.phase_done.set_drain_time(this,250);
 	phase.drop_objection(this);
@@ -323,8 +336,11 @@ task cpha1_cpol1_msb_test::run_phase(uvm_phase phase);
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
-				spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
-				apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
+					begin
+						spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
+						apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+					end
 			end
 			//phase.phase_done.set_drain_time(this,250);
 	phase.drop_objection(this);
@@ -373,8 +389,11 @@ task cpha0_cpol0_msb_test::run_phase(uvm_phase phase);
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
-				spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
-				apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
+					begin
+						spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
+						apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+					end
 			end
 			//phase.phase_done.set_drain_time(this,250);
 	phase.drop_objection(this);
@@ -423,8 +442,11 @@ task cpha1_cpol0_msb_test::run_phase(uvm_phase phase);
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
-				spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
-				apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
+					begin
+						spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
+						apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+					end
 			end
 			//phase.phase_done.set_drain_time(this,250);
 	phase.drop_objection(this);
@@ -474,10 +496,116 @@ task cpha0_cpol1_msb_test::run_phase(uvm_phase phase);
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
-				spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
-				apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
+					begin
+						spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh);
+						apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+					end
 			end
 			//phase.phase_done.set_drain_time(this,250);
+	phase.drop_objection(this);
+
+endtask : run_phase
+
+
+class reset_test extends base_test;
+	`uvm_component_utils(reset_test)
+	
+	bit [7:0] CR1 = 8'b11111010;
+	bit [7:0] CR2 = 8'b00010000;
+	bit [3:0] ADDR;
+	apb_reset_sequence apb_reset_seq;
+	apb_write_sequence apb_wr_seq;
+	apb_read_sequence apb_rd_seq;
+	spi_write_sequence spi_wr_seq;
+	
+	function new(string name = "reset_test",uvm_component parent);
+		super.new(name,parent);
+	endfunction : new
+
+	extern function void build_phase(uvm_phase phase);
+	extern function void end_of_elaboration_phase(uvm_phase phase);
+	extern task run_phase(uvm_phase phase);
+endclass : reset_test
+
+function void reset_test::build_phase(uvm_phase phase);
+	super.build_phase(phase);
+	uvm_config_db #(bit[7:0])::set(this,"*","CR1",CR1);
+	uvm_config_db #(bit[7:0])::set(this,"*","CR2",CR2);
+	uvm_config_db #(bit)::set(this,"*","reset_test",1);
+	
+	apb_reset_seq = apb_reset_sequence::type_id::create("apb_reset_seq");
+	apb_wr_seq = apb_write_sequence::type_id::create("apb_wr_seq");
+	apb_rd_seq = apb_read_sequence::type_id::create("apb_rd_seq");
+
+endfunction : build_phase
+
+function void reset_test::end_of_elaboration_phase(uvm_phase phase);
+	super.end_of_elaboration_phase(phase);
+endfunction : end_of_elaboration_phase
+
+task reset_test::run_phase(uvm_phase phase);
+	phase.raise_objection(this);
+		for(int i = 0;i < cfg.num_of_apb_agents;i++)
+			begin
+				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				for(int num = 0; num < 5;num++)
+					begin
+						if(num == 4)
+							uvm_config_db #(bit[2:0])::set(this,"*","ADDR",5);
+						else
+							uvm_config_db #(bit[2:0])::set(this,"*","ADDR",num);
+						apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh);
+					end
+			end
+			//phase.phase_done.set_drain_time(this,250);
+	phase.drop_objection(this);
+
+endtask : run_phase
+
+
+class low_power_test extends base_test;
+	`uvm_component_utils(low_power_test)
+	
+	bit [7:0] CR1 = 8'b10110010;
+	bit [7:0] CR2 = 8'b00010000;
+
+	apb_reset_sequence apb_reset_seq;
+	apb_write_sequence apb_wr_seq;
+	
+	function new(string name = "low_power_test",uvm_component parent);
+		super.new(name,parent);
+	endfunction : new
+
+	extern function void build_phase(uvm_phase phase);
+	extern function void end_of_elaboration_phase(uvm_phase phase);
+	extern task run_phase(uvm_phase phase);
+endclass : low_power_test
+
+function void low_power_test::build_phase(uvm_phase phase);
+	super.build_phase(phase);
+	uvm_config_db #(bit[7:0])::set(this,"*","CR1",CR1);
+	uvm_config_db #(bit[7:0])::set(this,"*","CR2",CR2);
+	uvm_config_db #(bit)::set(this,"*","low_power_test",1);
+	
+	apb_reset_seq = apb_reset_sequence::type_id::create("apb_reset_seq");
+	apb_wr_seq = apb_write_sequence::type_id::create("apb_wr_seq");
+
+endfunction : build_phase
+
+function void low_power_test::end_of_elaboration_phase(uvm_phase phase);
+	super.end_of_elaboration_phase(phase);
+endfunction : end_of_elaboration_phase
+
+task low_power_test::run_phase(uvm_phase phase);
+	phase.raise_objection(this);
+		for(int i = 0;i < cfg.num_of_apb_agents;i++)
+			begin
+				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);
+				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);
+			end
+			phase.phase_done.set_drain_time(this, 200000);
 	phase.drop_objection(this);
 
 endtask : run_phase

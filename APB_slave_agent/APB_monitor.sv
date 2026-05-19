@@ -29,8 +29,26 @@ endfunction : connect_phase
 
 task apb_monitor::run_phase(uvm_phase phase);
 	super.run_phase(phase);
+	fork
+       
+        forever begin
+            @(negedge vif.PRESET_n); // Monitor the raw unclocked interface wire
+            begin
+                apb_xtn reset_xtn; 
+				reset_xtn = apb_xtn::type_id::create("reset_xtn");
+                reset_xtn.PRESET_n = 1'b0;
+                reset_xtn.PSEL     = 1'b0;
+                reset_xtn.PENABLE  = 1'b0;
+                reset_xtn.PWRITE   = 1'b0;
+                monitor_port.write(reset_xtn);
+            end
+            wait(vif.PRESET_n == 1'b1); 
+        end
 	forever
-		collect_data();
+		begin
+			collect_data();
+		end
+	join
 endtask : run_phase
 
 task apb_monitor::collect_data();

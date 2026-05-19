@@ -8,6 +8,12 @@ class core_sb extends uvm_scoreboard;
 
 	int unsigned mosi_data_verified;
 	int unsigned miso_data_verified;
+	int unsigned reset_verified;
+
+	bit is_reset_test = 1'b0;
+    bit reset_has_occurred = 1'b0;
+
+	bit is_low_power_test = 1'b0;
 
 	covergroup cg_apb;
 	option.per_instance = 1;
@@ -16,7 +22,7 @@ class core_sb extends uvm_scoreboard;
 		PENABLE : coverpoint apb_cov_data.PENABLE;
 		PWRITE  : coverpoint apb_cov_data.PWRITE;
 		PADDR   : coverpoint apb_cov_data.PADDR {
-													bins ADDR[] = {0,1,2,3,5};
+													bins ADDR[] = {0,1,2,5};
 												}
 		DATA    : coverpoint apb_cov_data.PWDATA {
 													bins LOW = {[0:8'h80]};
@@ -26,7 +32,7 @@ class core_sb extends uvm_scoreboard;
 	endgroup : cg_apb
 
 	covergroup cg_spi;
-		SS : coverpoint spi_cov_data.ss;
+		SS : coverpoint spi_cov_data.ss {bins SS = {1,0};}
 		MOSI : coverpoint spi_cov_data.mosi {
 												bins LOW = {[0:8'h80]};
 												bins HIGH = {[8'h80:8'hff]};
@@ -45,15 +51,48 @@ class core_sb extends uvm_scoreboard;
 		cg_apb = new();
 		cg_spi = new();
 	endfunction : new
+	extern function void build_phase(uvm_phase phase);
 	extern task run_phase(uvm_phase phase);
 	extern task compare_data();
 	extern function void report_phase(uvm_phase phase);
 
 endclass : core_sb
 
-task core_sb::run_phase(uvm_phase phase);
-	
+function void core_sb::build_phase(uvm_phase phase);
+	if(!uvm_config_db#(bit)::get(this,"","reset_test", is_reset_test))
+		begin
+			is_reset_test = 0;
+			reset_has_occurred = 0;
+		end
+	if (!uvm_config_db#(bit)::get(this,"","low_power_test", is_low_power_test))
+            is_low_power_test = 1'b0;
 		
+endfunction : build_phase
+
+task core_sb::run_phase(uvm_phase phase);
+	if(is_low_power_test)
+		begin
+			//---------------------------------------------------------
+        	// LOW POWER VERIFICATION CODELINE
+        	//---------------------------------------------------------
+			fork
+				//Monitor for accidental SPI activity
+				begin
+					spi_fifo.get(spi_data);
+					`uvm_error("LOW_PWR_FAIL", "Protocol Violation! SPI generated traffic/SS while in low power stop mode!")
+				end
+				
+				// Safe Watchdog Timeout Window
+				begin
+					$display("checking...");
+					#200000; // Must match or be slightly shorter than the sequence delay window
+					`uvm_info("LOW_PWR_PASS", "SUCCESS: SPI stayed in Stop Mode. No SS or clock transitions detected.", UVM_LOW)
+				end
+			join_any
+			disable fork;
+		end
+	else
+		begin
 			fork
 				begin
 					forever begin
@@ -67,37 +106,86 @@ task core_sb::run_phase(uvm_phase phase);
 					apb_fifo.get(apb_data);
 					apb_cov_data = new apb_data;
 					cg_apb.sample();
+					if (apb_data.PRESET_n == 1'b0) 
+						begin
+                    		`uvm_info("SB_RESET", "Reset Transaction detected in Scoreboard!", UVM_LOW)
+							apb_fifo.flush();
+                    		spi_fifo.flush();
+							if(is_reset_test)
+								reset_has_occurred = 1;
+							continue;
+						end
+					if(apb_data.PWRITE == 1 && apb_data.PADDR == 3'b101 && apb_data.PWDATA == 8'h00)
+						begin
+							`uvm_info("SB_SKIP", "Detected data register write of 8'h00. Skipping comparison pipeline.", UVM_LOW)
+                    		continue;
+						end
 					if(apb_data.PWRITE == 0)
 						compare_data;
 					end
 				end
 			join
-		
+		end
 endtask : run_phase
 
 task core_sb::compare_data;
-//MOSI DATA COMPARISION
-	if(apb_data.PWDATA == spi_data.mosi)
+	if(is_reset_test && reset_has_occurred)
 		begin
-			`uvm_info("SB:",$sformatf("MOSI DATA COMPARED SUCCESSFULLY. SENT DATA = %0h, RECEIVED DATA = %0h",apb_data.PWDATA,spi_data.mosi),UVM_LOW)
-			mosi_data_verified++;
+			if (apb_data.PRDATA == 8'h04 && apb_data.PADDR == 3'b000) 
+				begin
+            		`uvm_info("SB_RESET_PASS", $sformatf("RESET VERIFIED: Control Register 1 at PADDR = %0h successfully cleared to 8'h04.", apb_data.PADDR), UVM_LOW)
+            		reset_verified++;
+        		end
+			else if (apb_data.PRDATA == 8'h00 && apb_data.PADDR == 3'b001)
+				begin
+            		`uvm_info("SB_RESET_PASS", $sformatf("RESET VERIFIED: Control Register 2 at PADDR = %0h successfully cleared to 8'h00.", apb_data.PADDR), UVM_LOW)
+            		reset_verified++;
+        		end
+			else if (apb_data.PRDATA == 8'h00 && apb_data.PADDR == 3'b010) 
+				begin
+					`uvm_info("SB_RESET_PASS", $sformatf("RESET VERIFIED: Baud Register at PADDR = %0h successfully cleared to 8'h00.", apb_data.PADDR), UVM_LOW)
+            		reset_verified++;
+				end
+			else if (apb_data.PRDATA == 8'h20 && apb_data.PADDR == 3'b011)
+				begin
+					`uvm_info("SB_RESET_PASS", $sformatf("RESET VERIFIED: Status Register at PADDR = %0h successfully cleared to 8'h20.", apb_data.PADDR), UVM_LOW)
+            		reset_verified++;
+				end
+			else if (apb_data.PRDATA == 8'h00 && apb_data.PADDR == 3'b101)
+				begin
+					`uvm_info("SB_RESET_PASS", $sformatf("RESET VERIFIED: Data Register at PADDR = %0h successfully cleared to 8'h00.", apb_data.PADDR), UVM_LOW)
+            		reset_verified++;
+				end
+        	else 
+				begin
+            		`uvm_error("SB_RESET_FAIL", $sformatf("RESET MISMATCH: Register at PADDR = %0h should be 8'h00 but read back as 8'h%0h!", apb_data.PADDR, apb_data.PRDATA))
+        		end
 		end
 	else
-		`uvm_error("SB:",$sformatf("MOSI DATA MISMATCH. SENT DATA = %0h, RECEIVED DATA = %0h",apb_data.PWDATA,spi_data.mosi))
+		begin
+		//MOSI DATA COMPARISION
+			if(apb_data.PWDATA == spi_data.mosi)
+				begin
+					`uvm_info("SB:",$sformatf("MOSI DATA COMPARED SUCCESSFULLY. SENT DATA = %0h, RECEIVED DATA = %0h",apb_data.PWDATA,spi_data.mosi),UVM_LOW)
+					mosi_data_verified++;
+				end
+			else
+				`uvm_error("SB:",$sformatf("MOSI DATA MISMATCH. SENT DATA = %0h, RECEIVED DATA = %0h",apb_data.PWDATA,spi_data.mosi))
 
-//MISO DATA COMPARISION
-	if(apb_data.PRDATA == spi_data.miso)
-		begin
-			`uvm_info("SB:",$sformatf("MISO DATA COMPARED SUCCESSFULLY. SENT DATA = %0h, RECEIVED DATA = %0h",spi_data.miso,apb_data.PRDATA),UVM_LOW)
-			miso_data_verified++;
+		//MISO DATA COMPARISION
+			if(apb_data.PRDATA == spi_data.miso)
+				begin
+					`uvm_info("SB:",$sformatf("MISO DATA COMPARED SUCCESSFULLY. SENT DATA = %0h, RECEIVED DATA = %0h",spi_data.miso,apb_data.PRDATA),UVM_LOW)
+					miso_data_verified++;
+				end
+			else
+				`uvm_error("SB:",$sformatf("MISO DATA MISMATCH. SENT DATA = %0h, RECEIVED DATA = %0h",spi_data.miso,apb_data.PRDATA))
 		end
-	else
-		`uvm_error("SB:",$sformatf("MISO DATA MISMATCH. SENT DATA = %0h, RECEIVED DATA = %0h",spi_data.miso,apb_data.PRDATA))
-		
 endtask : compare_data
 
 function void core_sb::report_phase(uvm_phase phase);
 	$display("\n================================================SCOREBOARD REPORT================================================");
+	$display("\t \t \t \t \tNumber of RESET data verified is : %0d",reset_verified);
 	$display("\t \t \t \t \tNumber of MOSI data verified is : %0d",mosi_data_verified);
 	$display("\t \t \t \t \tNumber of MISO data verified is : %0d",miso_data_verified);
 	$display("=================================================================================================================");

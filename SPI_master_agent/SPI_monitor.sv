@@ -72,8 +72,8 @@ task spi_monitor::collect_data();
 			xtn.miso = {<<{xtn.miso}};
 		end
 	xtn.print;
-	/*if(xtn.mosi != 8'haa)
-		`uvm_fatal("SPI MON","DATA_MISMATCH")*/
-	monitor_port.write(xtn);
+	
 	wait(vif.ss == 1);
+	xtn.ss = 1;
+	monitor_port.write(xtn);
 endtask : collect_data

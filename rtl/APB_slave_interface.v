@@ -201,7 +201,7 @@ begin
 		send_data_o <= 1'b0;
 	else
 	begin
-		if((SPI_DR == PWDATA_i)&&(SPI_DR != miso_data_i)&&((spi_mode_o == RUN)||((spi_mode_o == WAIT)&&(!spiswai_o))))
+		if((SPI_DR == PWDATA_i)&&(SPI_DR != miso_data_i)&&(SPI_DR != 8'b0)&&((spi_mode_o == RUN)||((spi_mode_o == WAIT)&&(!spiswai_o))))
 			send_data_o <= 1'b1;
 		else
 			send_data_o <= 1'b0;

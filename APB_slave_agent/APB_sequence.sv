@@ -73,7 +73,7 @@ task apb_write_sequence::body();
         begin
             req = apb_xtn::type_id::create("req");
             start_item(req);
-            if(!req.randomize() with {PRESET_n == 1'b1; PWRITE == 1'b1; /*SPPR == 3'd0; SPR == 3'd0;*/ PWDATA == {1'b0,SPPR,1'b0,SPR}; PADDR == 3'b010;})
+            if(!req.randomize() with {PRESET_n == 1'b1; PWRITE == 1'b1; SPPR == 3'd7; SPR == 3'd7; PWDATA == {1'b0,SPPR,1'b0,SPR}; PADDR == 3'b010;})
                 `uvm_fatal("APB_SEQ","randomization failed")
             finish_item(req);
         end
@@ -89,22 +89,22 @@ endtask : body
 
 class apb_read_sequence extends apb_sequence_base;
     `uvm_object_utils(apb_read_sequence)
-
+    bit[2:0] ADDR;
     function new(string name = "apb_read_sequence");
         super.new(name);
     endfunction : new
-
     extern task body;
 
 endclass : apb_read_sequence
 
 task apb_read_sequence::body();
-
+    if(!uvm_config_db #(bit[2:0])::get(null,get_full_name,"ADDR",ADDR))
+        ADDR = 3'b101;
     repeat(1)
         begin
             req = apb_xtn::type_id::create("req");
             start_item(req);
-            if(!req.randomize() with {PRESET_n == 1'b1; PWRITE == 1'b0; PADDR == 3'b101;})
+            if(!req.randomize() with {PRESET_n == 1'b1; PWRITE == 1'b0; PADDR == ADDR;})
                 `uvm_fatal("APB_SEQ","randomization failed")
             finish_item(req);
         end

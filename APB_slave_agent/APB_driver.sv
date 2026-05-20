@@ -1,7 +1,10 @@
+/*======================================================================
+============================APB DRIVER CLASS============================
+=======================================================================*/
 class apb_driver extends uvm_driver #(apb_xtn);
 	`uvm_component_utils(apb_driver)
 	
-	apb_agent_config cfg;
+	apb_agent_config          cfg;
 	virtual apb_if.APB_DRV_MP vif;
 
 	function new(string name = "apb_driver",uvm_component parent);
@@ -16,6 +19,7 @@ endclass : apb_driver
 
 function void apb_driver::build_phase(uvm_phase phase);
 	super.build_phase(phase);
+	//Getting APB agent config via config db
 	if(!uvm_config_db #(apb_agent_config)::get(this,"","apb_agent_config",cfg))
 		`uvm_fatal("APB DRV","get failed for apb_agent_config")
 endfunction : build_phase
@@ -36,10 +40,11 @@ task apb_driver::run_phase(uvm_phase phase);
 endtask : run_phase
 
 task apb_driver::drive_to_dut(apb_xtn xtn);
-	vif.apb_drv_cb.PSEL <= '1;
-	vif.apb_drv_cb.PENABLE <= '0; //SETUP phase
-	vif.apb_drv_cb.PADDR <= xtn.PADDR;
-	vif.apb_drv_cb.PWRITE <= xtn.PWRITE;
+	//Driving logic
+	vif.apb_drv_cb.PSEL     <= '1;
+	vif.apb_drv_cb.PENABLE  <= '0; //SETUP phase
+	vif.apb_drv_cb.PADDR    <= xtn.PADDR;
+	vif.apb_drv_cb.PWRITE   <= xtn.PWRITE;
 	vif.apb_drv_cb.PRESET_n <= xtn.PRESET_n;
 	if(xtn.PWRITE)
 		vif.apb_drv_cb.PWDATA <= xtn.PWDATA;
@@ -47,14 +52,12 @@ task apb_driver::drive_to_dut(apb_xtn xtn);
 	@(vif.apb_drv_cb);
 	vif.apb_drv_cb.PENABLE <= '1; //ENABLE phase
 	if(xtn.PRESET_n)
-	wait(vif.apb_drv_cb.PREADY) //Transmition done ack
+		wait(vif.apb_drv_cb.PREADY) //Transmition done ack
 		if(xtn.PWRITE == 0)
 			begin
 				xtn.PRDATA = vif.apb_drv_cb.PRDATA;
-				//`uvm_info("APB DRV",$sformatf("Received PRDATA: %s",xtn.sprint()),UVM_LOW)
 			end
-	//$display("DATA transmit done");
-	vif.apb_drv_cb.PSEL <= '0;
+	vif.apb_drv_cb.PSEL    <= '0;
 	vif.apb_drv_cb.PENABLE <= '0; //IDLE phase
 	@(vif.apb_drv_cb);
 endtask : drive_to_dut

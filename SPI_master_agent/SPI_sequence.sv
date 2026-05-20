@@ -1,3 +1,6 @@
+/*======================================================================
+===========================SPI SEQUENCE CLASS===========================
+=======================================================================*/
 class spi_sequence_base extends uvm_sequence #(spi_xtn);
     `uvm_object_utils(spi_sequence_base)
 
@@ -7,6 +10,7 @@ class spi_sequence_base extends uvm_sequence #(spi_xtn);
 
 endclass : spi_sequence_base
 
+//SPI WRITE SEQ
 class spi_write_sequence extends spi_sequence_base;
     `uvm_object_utils(spi_write_sequence)
 

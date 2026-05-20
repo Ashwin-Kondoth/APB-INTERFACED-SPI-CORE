@@ -1,3 +1,6 @@
+/*======================================================================
+=============================SPI DRIVER CLASS===========================
+=======================================================================*/
 class spi_monitor extends uvm_monitor;
 	`uvm_component_utils(spi_monitor)
 	
@@ -23,8 +26,10 @@ endclass : spi_monitor
 
 function void spi_monitor::build_phase(uvm_phase phase);
 	super.build_phase(phase);
+	//Getting SPI agent config via config db
 	if(!uvm_config_db #(spi_agent_config)::get(this,"","spi_agent_config",cfg))
 		`uvm_fatal("SPI DRV","get failed for spi_agent_config")
+	//Getting CR1 data from test via config db
 	if(!uvm_config_db #(bit[7:0])::get(this,"","CR1",CR1))
 		`uvm_fatal("SPI DRV","get failed for CR1")
 endfunction : build_phase
@@ -43,15 +48,15 @@ task spi_monitor::run_phase(uvm_phase phase);
 	forever
 		begin
 		collect_data();
-	
 		end
 endtask
 
+//SPI MONITORING LOGIC
 task spi_monitor::collect_data();
 	spi_xtn xtn;
 	xtn = spi_xtn::type_id::create("xtn");
 	wait(vif.ss == 0);
-	if (cpol ^ cpha) 
+	if (cpol ^ cpha) //MODE1 & MODE2
         for (int i = 0; i < 8; i++) 
 			begin
             	@(vif.spi_mon_cb_neg);
@@ -59,14 +64,14 @@ task spi_monitor::collect_data();
             	xtn.mosi[i] = vif.spi_mon_cb_neg.mosi;
     		end
 
-    else 
+    else //MODE0 & MODE3
         for (int i = 0; i < 8; i++) 
 			begin
                 @(vif.spi_mon_cb_pos);
 				xtn.miso[i] = vif.spi_mon_cb_pos.miso;
             	xtn.mosi[i] = vif.spi_mon_cb_pos.mosi;
         	end
-	if(lsb == 0)
+	if(lsb == 0) //inverting bits for MSB
 		begin
 			xtn.mosi = {<<{xtn.mosi}};
 			xtn.miso = {<<{xtn.miso}};
@@ -75,5 +80,5 @@ task spi_monitor::collect_data();
 	
 	wait(vif.ss == 1);
 	xtn.ss = 1;
-	monitor_port.write(xtn);
+	monitor_port.write(xtn); //Send to Scoreboard
 endtask : collect_data

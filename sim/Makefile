@@ -14,6 +14,7 @@ INC = +incdir+../tb +incdir+../test +incdir+../APB_slave_agent +incdir+../SPI_ma
 SVTB2 = ../test/test_pkg.sv
 VSIMOPT= -vopt -voptargs=+acc 
 VSIMCOV= -coverage -sva 
+
 VSIMBATCH= -c -do  " log -r /* ;coverage save -onexit cov0;run -all; exit"
 VSIMBATCH1= -c -do  " log -r /* ;coverage save -onexit cov1;run -all; exit"
 VSIMBATCH2= -c -do  " log -r /* ;coverage save -onexit cov2;run -all; exit"
@@ -23,6 +24,8 @@ VSIMBATCH5= -c -do  " log -r /* ;coverage save -onexit cov5;run -all; exit"
 VSIMBATCH6= -c -do  " log -r /* ;coverage save -onexit cov6;run -all; exit"
 VSIMBATCH7= -c -do  " log -r /* ;coverage save -onexit cov7;run -all; exit"
 VSIMBATCH8= -c -do  " log -r /* ;coverage save -onexit cov8;run -all; exit"
+VSIMBATCH9= -c -do  " log -r /* ;coverage save -onexit cov9;run -all; exit"
+VSIMBATCH10= -c -do  " log -r /* ;coverage save -onexit cov10;run -all; exit"
 
 help:
 	@echo =============================================================================================================
@@ -57,9 +60,14 @@ sv_cmp_Questa:
 	vmap work $(work)
 	vlog -work $(work) $(RTL) $(INC) $(SVTB2) $(SVTB1) 	
 
+run_ct_Questa: clean sv_cmp_Questa
+	vsim -cvgperinstance $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH10)  -wlf wave_ct.wlf -l ct_test.log  -sv_seed random work.top +UVM_TESTNAME=corner_test
+	vcover report  -cvg  -details -nocompactcrossbins -codeAll -assert -directive -html cov10
+
 run_lp_Questa: clean sv_cmp_Questa
-	vsim  $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH)  -wlf wave_lp.wlf -l lptest.log  -sv_seed random work.top +UVM_TESTNAME=low_power_test
-	
+	vsim -cvgperinstance $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH9)  -wlf wave_lp.wlf -l lptest.log  -sv_seed random work.top +UVM_TESTNAME=low_power_test
+	vcover report  -cvg  -details -nocompactcrossbins -codeAll -assert -directive -html cov9
+
 run_reset_Questa: clean sv_cmp_Questa
 	vsim  -cvgperinstance $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH)  -wlf wave.wlf -l test.log  -sv_seed 4249856925 work.top +UVM_TESTNAME=reset_test
 	vcover report  -cvg  -details -nocompactcrossbins -codeAll -assert -directive -html cov0

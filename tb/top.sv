@@ -1,14 +1,20 @@
+/*======================================================================
+================================TOP MODULE==============================
+=======================================================================*/
+
 module top;
+
 	import test_pkg::*;
 	import uvm_pkg::*;
 
-	parameter period = 10;
+	parameter period = 5;
 
-	bit clock;
-	int count = 1;
-	apb_if APB_IF(clock);
-	spi_if SPI_IF();
+	bit 	  clock; 		 //System clock
+	int       count  = 1;
+	apb_if    APB_IF(clock); //APB INTERFACE
+	spi_if    SPI_IF();      //SPI INTERFACE
 
+//DUT INSTANTIATION
 	APB_interfaced_SPI DUV(.PCLK(APB_IF.PCLK),
 						   .PRESET_n(APB_IF.PRESET_n),
 						   .PADDR(APB_IF.PADDR),
@@ -25,12 +31,14 @@ module top;
 						   .mosi(SPI_IF.mosi),
 						   .spi_interrupt_request(APB_IF.spi_interrupt_request));
 
+//CLOCK GENERATION
 	initial
 		begin
 			clock = 1'b0;
 			forever #(period/2) clock = ~clock;
 		end
 
+//Setting Interfaces and starting the Test
 	initial 
 		begin
 			for(int i = 0;i < count;i++)

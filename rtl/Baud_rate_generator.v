@@ -1,4 +1,4 @@
-`timescale 1ns / 1ps
+//`timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
@@ -83,77 +83,89 @@ end
 //miso receive flag logic
 always @(posedge PCLK or negedge PRESET_n) 
 begin
-	if (!PRESET_n)
-	begin
-		miso_receive_sclk_o <= 0;
-		miso_receive_sclk0_o <= 0;
-	end
-	else if (cpol_i ^ cpha_i) //sampling/transmitting edge logic 1 -> negative edge, 0 -> positive edge
-	begin
-		miso_receive_sclk_o <= 1'b0;
-		if ((sclk_o == 1'b1) && (count == ((BaudRateDivisor_o / 2) - 1'b1))) //sampling done after negative edge of sclk till next positive edge of PCLK
+		if (!PRESET_n)
 		begin
-			miso_receive_sclk0_o <= 1'b1;
+			miso_receive_sclk_o <= 0;
+			miso_receive_sclk0_o <= 0;
+		end
+		else if (cpol_i ^ cpha_i) //sampling/transmitting edge logic 1 -> negative edge, 0 -> positive edge
+		begin
+			miso_receive_sclk_o <= 1'b0;
+			if ((sclk_o == 1'b1) && (count == ((BaudRateDivisor_o / 2) - 1'b1)) && (!ss_i)) //sampling done after negative edge of sclk till next positive edge of PCLK
+			begin
+				miso_receive_sclk0_o <= 1'b1;
+			end
+			else
+			begin
+				miso_receive_sclk0_o <= 1'b0;
+			end
 		end
 		else
 		begin
 			miso_receive_sclk0_o <= 1'b0;
+			if ((sclk_o == 1'b0) && (count == ((BaudRateDivisor_o / 2) - 1'b1)) && (!ss_i)) //sampling done after positive edge of sclk till next positive edge of PCLK
+			begin
+				miso_receive_sclk_o <= 1'b1;
+			end
+			else
+			begin
+				miso_receive_sclk_o <= 1'b0;
+			end
 		end
-	end
-	else
-	begin
-		miso_receive_sclk0_o <= 1'b0;
-		if ((sclk_o == 1'b0) && (count == ((BaudRateDivisor_o / 2) - 1'b1))) //sampling done after positive edge of sclk till next positive edge of PCLK
-		begin
-			miso_receive_sclk_o <= 1;
-		end
-		else
-		begin
-			miso_receive_sclk_o <= 1'b0;
-		end
-	end
 end
 
 //mosi send flag logic
 always @(posedge PCLK or negedge PRESET_n) 
 begin
-	if (!PRESET_n)
-	begin
-		mosi_send_sclk_o <= 0;
-		mosi_send_sclk0_o <= 0;
-	end
-	else if (cpol_i ^ cpha_i)
-	begin
-		mosi_send_sclk0_o <= 1'b0;
-		if ((sclk_o == 1'b1) && (count == ((BaudRateDivisor_o / 2) - 2'b10)) && (!ss_i)) //transfer done before negative edge of sclk till next positive edge of PCLK
-		begin
-			mosi_send_sclk_o <= 1'b1;
-		end
-		else if((BaudRateDivisor_o == 2) && (sclk_o == 1'b0))
-		begin
-			mosi_send_sclk_o <= 1'b1;
-		end
-		else
-		begin
-			mosi_send_sclk_o <= 1'b0;
-		end
-	end
-	else
-	begin
-		mosi_send_sclk_o <= 1'b0;	
-		if ((sclk_o == 1'b0) && (count == ((BaudRateDivisor_o / 2) - 2'b10)) && (!ss_i)) //transfer done before positive edge of sclk till next positive edge of PCLK
-		begin
-			mosi_send_sclk0_o <= 1'b1;
-		end
-		else if((BaudRateDivisor_o == 2) && (sclk_o == 1'b1))
-		begin
-			mosi_send_sclk0_o <= 1'b1;
-		end
-		else
-		begin
-			mosi_send_sclk0_o <= 1'b0;
-		end
-	end
+					if (!PRESET_n)
+					begin
+						mosi_send_sclk_o <= 0;
+						mosi_send_sclk0_o <= 0;
+					end
+					else if (cpol_i ^ cpha_i)
+					begin
+						mosi_send_sclk0_o <= 1'b0;
+						if((!ss_i) && (BaudRateDivisor_o == 12'd2)) //TO handle BaudRateDivisor_o = 2 case
+							begin
+								if(sclk_o == 1'b1)
+									mosi_send_sclk_o <= 1'b1;
+								else
+									mosi_send_sclk_o <= 1'b0;
+							end
+						else
+							begin
+								if ((sclk_o == 1'b0) && (count == ((BaudRateDivisor_o / 2) - 1'b1)) && (!ss_i)) //transfer done before negative edge of sclk till next positive edge of PCLK
+								begin
+									mosi_send_sclk_o <= 1'b1;
+								end
+								else
+								begin
+									mosi_send_sclk_o <= 1'b0;
+								end
+							end
+					end
+					else
+					begin
+						mosi_send_sclk_o <= 1'b0;
+						if((!ss_i) && (BaudRateDivisor_o == 12'd2))
+							begin
+								if(sclk_o == 1'b0)
+									mosi_send_sclk0_o <= 1'b1;
+								else
+									mosi_send_sclk0_o <= 1'b0;
+							end
+						else
+							begin
+								if ((sclk_o == 1'b1) && (count == ((BaudRateDivisor_o / 2) - 1'b1)) && (!ss_i)) //transfer done before positive edge of sclk till next positive edge of PCLK
+								begin
+									mosi_send_sclk0_o <= 1'b1;
+								end
+								else
+								begin
+									mosi_send_sclk0_o <= 1'b0;
+								end
+							end
+					end
 end
 
 endmodule

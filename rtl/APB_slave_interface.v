@@ -1,4 +1,4 @@
-`timescale 1ns / 1ps
+//`timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
@@ -122,7 +122,7 @@ begin
 			SPI_CR1 <= SPI_CR1;
 	end
 	else
-		SPI_CR1 <= 8'h04;
+		SPI_CR1 <= SPI_CR1; //to hold the value
 end
 
 assign spiswai_o = SPI_CR2[1];
@@ -140,7 +140,7 @@ begin
 			SPI_CR2 <= SPI_CR2;
 	end
 	else
-		SPI_CR2 <= 8'h00;
+		SPI_CR2 <= SPI_CR2;
 end
 
 assign sppr_o = SPI_BR[6:4];
@@ -158,7 +158,7 @@ begin
 			SPI_BR <= SPI_BR;
 	end
 	else
-		SPI_BR <= 8'h00;
+		SPI_BR <= SPI_BR;
 end
 
 always @(posedge PCLK or negedge PRESET_n)
@@ -201,7 +201,7 @@ begin
 		send_data_o <= 1'b0;
 	else
 	begin
-		if((SPI_DR == PWDATA_i)&&(SPI_DR != miso_data_i)&&((spi_mode_o == RUN)||((spi_mode_o == WAIT)&&(!spiswai_o))))
+		if((SPI_DR == PWDATA_i)&&(SPI_DR != miso_data_i)&&(SPI_DR != 8'b0)&&((spi_mode_o == RUN)||((spi_mode_o == WAIT)&&(!spiswai_o))))
 			send_data_o <= 1'b1;
 		else
 			send_data_o <= 1'b0;
@@ -256,12 +256,12 @@ end
 //APB FSM combinational logic
 always @(*)
 begin
-	apb_next_state = apb_current_state;
-	
 		case(apb_current_state)
 		IDLE : begin
 		if(PSEL_i && !PENABLE_i)
 			apb_next_state = SETUP;
+		else if(PSEL_i && PENABLE_i)
+			apb_next_state = ENABLE;
 		else
 			apb_next_state = IDLE;
 			end
@@ -288,7 +288,6 @@ end
 //SPI FSM combinational logic
 always @(*)
 begin
-		spi_next_state = spi_mode_o;
 	case(spi_mode_o)
 	RUN : begin
 	if(!SPE)

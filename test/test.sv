@@ -19,6 +19,9 @@ class base_test extends uvm_test;
 	bit 				has_scoreboard = 1;
 	bit 				has_virtual_sequencer = 1;
 
+	//REGISTER BLOCK HANDLE
+	spi_reg_block 		spi_reg_blk;
+
 	core_env envh;
 	
 	function new(string name = "base_test",uvm_component parent);
@@ -62,6 +65,11 @@ function void base_test::build_phase(uvm_phase phase);
 					cfg.spi_cfg[i] = spi_cfg[i];
 				end
 		end
+	
+	//Creating object for SPI REGISTER BLOCK and calling build function
+	spi_reg_blk = spi_reg_block::type_id::create("spi_reg_blk");
+	spi_reg_blk.build();
+
 	config_env();
 	envh = core_env::type_id::create("envh",this);
 	
@@ -78,6 +86,9 @@ function void base_test::config_env();
 	cfg.has_scoreboard        = has_scoreboard;
 	cfg.has_virtual_sequencer = has_virtual_sequencer;
 
+	//Assigning SPI REG BLOCK object to env config SPI REG BLOCK
+	cfg.spi_reg_blk 		  = spi_reg_blk;
+
 	//Setting ENV CONFURATION in config db
 	uvm_config_db #(env_config)::set(this,"*","env_config",cfg);
 
@@ -92,7 +103,7 @@ endfunction : end_of_elaboration_phase
 class cpha1_cpol1_lsb_test extends base_test;
 	`uvm_component_utils(cpha1_cpol1_lsb_test)
 	
-	bit [7:0] CR1 = 8'b11111111;
+	bit [7:0] CR1 = 8'b11111101;
 	bit [7:0] CR2 = 8'b00010000;
 
 	apb_reset_sequence apb_reset_seq;
@@ -127,10 +138,10 @@ endfunction : end_of_elaboration_phase
 
 task cpha1_cpol1_lsb_test::run_phase(uvm_phase phase);
 	phase.raise_objection(this);
-		for(int j =0; j< 100; j++)
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				assert(apb_wr_seq.randomize());
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);	 //APB WRITE SEQ
 				//CHECK IF DR WRITE IS ZERO
 				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
@@ -186,6 +197,7 @@ task cpha0_cpol0_lsb_test::run_phase(uvm_phase phase);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				assert(apb_wr_seq.randomize());
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);    //APB WRITE SEQ
 				//CHECK IF DR WRITE IS ZERO
 				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
@@ -241,6 +253,7 @@ task cpha1_cpol0_lsb_test::run_phase(uvm_phase phase);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				assert(apb_wr_seq.randomize());
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);    //APB WRITE SEQ
 				//CHECK IF DR WRITE IS ZERO
 				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
@@ -296,6 +309,7 @@ task cpha0_cpol1_lsb_test::run_phase(uvm_phase phase);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				assert(apb_wr_seq.randomize());
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);    //APB WRITE SEQ
 				//CHECK IF DR WRITE IS ZERO
 				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
@@ -351,6 +365,7 @@ task cpha1_cpol1_msb_test::run_phase(uvm_phase phase);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				assert(apb_wr_seq.randomize());
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);    //APB WRITE SEQ
 				//CHECK IF DR WRITE IS ZERO
 				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
@@ -406,6 +421,7 @@ task cpha0_cpol0_msb_test::run_phase(uvm_phase phase);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				assert(apb_wr_seq.randomize());
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);    //APB WRITE SEQ
 				//CHECK IF DR WRITE IS ZERO
 				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
@@ -461,6 +477,7 @@ task cpha1_cpol0_msb_test::run_phase(uvm_phase phase);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				assert(apb_wr_seq.randomize());
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);    //APB WRITE SEQ
 				//CHECK IF DR WRITE IS ZERO
 				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
@@ -516,6 +533,7 @@ task cpha0_cpol1_msb_test::run_phase(uvm_phase phase);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				assert(apb_wr_seq.randomize());
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);    //APB WRITE SEQ
 				//CHECK IF DR WRITE IS ZERO
 				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
@@ -538,8 +556,6 @@ class reset_test extends base_test;
 	bit [3:0] ADDR;
 	apb_reset_sequence apb_reset_seq;
 	apb_write_sequence apb_wr_seq;
-	apb_read_sequence  apb_rd_seq;
-	spi_write_sequence spi_wr_seq;
 	
 	function new(string name = "reset_test",uvm_component parent);
 		super.new(name,parent);
@@ -558,7 +574,6 @@ function void reset_test::build_phase(uvm_phase phase);
 	
 	apb_reset_seq = apb_reset_sequence::type_id::create("apb_reset_seq");
 	apb_wr_seq    = apb_write_sequence::type_id::create("apb_wr_seq");
-	apb_rd_seq    = apb_read_sequence::type_id::create("apb_rd_seq");
 
 endfunction : build_phase
 
@@ -572,14 +587,6 @@ task reset_test::run_phase(uvm_phase phase);
 			begin
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);   //APB WRITE SEQ
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);//RESET SEQ
-				for(int num = 0; num < 5;num++)
-					begin
-						if(num == 4)
-							uvm_config_db #(bit[2:0])::set(this,"*","ADDR",5);
-						else
-							uvm_config_db #(bit[2:0])::set(this,"*","ADDR",num);
-						apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh); //APB READ SEQ
-					end
 			end
 			//phase.phase_done.set_drain_time(this,250);
 	phase.drop_objection(this);
@@ -625,6 +632,7 @@ task low_power_test::run_phase(uvm_phase phase);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				assert(apb_wr_seq.randomize());
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);    //APB WRITE SEQ
 			end
 			phase.phase_done.set_drain_time(this, 200000); //WAIT for Scoreboard to complete
@@ -675,6 +683,7 @@ task corner_test::run_phase(uvm_phase phase);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				assert(apb_wr_seq.randomize() with {SPPR == 3'b000; SPR == 3'b000;});
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);	 //APB WRITE SEQ
 				//CHECK IF DR WRITE IS ZERO
 				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))

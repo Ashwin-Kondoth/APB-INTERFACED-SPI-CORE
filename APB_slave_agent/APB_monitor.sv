@@ -44,7 +44,7 @@ task apb_monitor::run_phase(uvm_phase phase);
                 	reset_xtn.PSEL     = 1'b0;
                 	reset_xtn.PENABLE  = 1'b0;
                 	reset_xtn.PWRITE   = 1'b0;
-                	monitor_port.write(reset_xtn);
+					monitor_port.write(reset_xtn);
             	end
             	wait(vif.PRESET_n == 1'b1); 
         	end

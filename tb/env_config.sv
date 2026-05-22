@@ -21,4 +21,7 @@ class env_config extends uvm_object;
 	apb_agent_config apb_cfg[];
 	spi_agent_config spi_cfg[];
 
+	//RAL : SPI REGISTER BLOCK CLASS
+	spi_reg_block 	 spi_reg_blk;
+
 endclass : env_config

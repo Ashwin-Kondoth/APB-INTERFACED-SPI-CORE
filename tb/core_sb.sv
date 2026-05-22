@@ -21,6 +21,11 @@ class core_sb extends uvm_scoreboard;
 
 	bit 							 is_low_power_test 	  = 1'b0;
 
+	env_config						 cfg;
+
+	//REGISTER BLOCK LOCAL HANDLE
+	spi_reg_block					 spi_reg_blk;
+	uvm_status_e					 r_status;
 //Covergroup for APB transactions for functional coverage
 	covergroup cg_apb;
 	option.per_instance = 1;
@@ -68,11 +73,14 @@ class core_sb extends uvm_scoreboard;
 endclass : core_sb
 
 function void core_sb::build_phase(uvm_phase phase);
+
+	if(!uvm_config_db #(env_config)::get(this,"","env_config",cfg))
+		`uvm_fatal("SB:","Get failed for env config")
+	spi_reg_blk = cfg.spi_reg_blk;
+
 	if(!uvm_config_db#(bit)::get(this,"","reset_test", is_reset_test))
-		begin
-			is_reset_test      = 1'b0;
-			reset_has_occurred = 1'b0;
-		end
+		is_reset_test      = 1'b0;
+
 	if (!uvm_config_db#(bit)::get(this,"","low_power_test", is_low_power_test))
             is_low_power_test  = 1'b0;
 		
@@ -122,7 +130,10 @@ task core_sb::run_phase(uvm_phase phase);
 									apb_fifo.flush();
 									spi_fifo.flush();
 									if(is_reset_test)
-										reset_has_occurred = 1;
+										begin
+											#5; //delay for process reset
+											compare_data;
+										end
 									continue;
 								end
 							if(apb_data.PWRITE == 1 && apb_data.PADDR == 3'b101 && apb_data.PWDATA == 8'h00) //RESET in NORMAL TEST CASE
@@ -140,38 +151,72 @@ endtask : run_phase
 
 task core_sb::compare_data;
 //RESET TEST CHECK
-	if(is_reset_test && reset_has_occurred)
+	if(is_reset_test)
 		begin
-			if (apb_data.PRDATA == 8'h04 && apb_data.PADDR == 3'b000) 
+			bit[7:0] reset_data;
+
+			//READING CONTENTS OF CONTROL REGISTER 1
+			spi_reg_blk.cr1.read(r_status,reset_data,.path(UVM_BACKDOOR),.map(spi_reg_blk.spi_reg_map));
+			if (reset_data == 8'h04) 
 				begin
-            		`uvm_info("SB_RESET_PASS", $sformatf("RESET VERIFIED: Control Register 1 at PADDR = %0h successfully cleared to 8'h04.", apb_data.PADDR), UVM_LOW)
+            		`uvm_info("SB_RESET_PASS", "RESET VERIFIED: Control Register 1 successfully cleared to 8'h04.", UVM_LOW)
             		reset_verified++;
         		end
-			else if (apb_data.PRDATA == 8'h00 && apb_data.PADDR == 3'b001)
+			else 
 				begin
-            		`uvm_info("SB_RESET_PASS", $sformatf("RESET VERIFIED: Control Register 2 at PADDR = %0h successfully cleared to 8'h00.", apb_data.PADDR), UVM_LOW)
+            		`uvm_error("SB_RESET_FAIL", $sformatf("RESET MISMATCH: Control Register 1 should be 8'h04 but read back as 8'h%0h!",reset_data))
+        		end
+
+			//READING CONTENTS OF CONTROL REGISTER 2
+			spi_reg_blk.cr2.read(r_status,reset_data,.path(UVM_BACKDOOR),.map(spi_reg_blk.spi_reg_map));
+			if (reset_data == 8'h00)
+				begin
+            		`uvm_info("SB_RESET_PASS", "RESET VERIFIED: Control Register 2 successfully cleared to 8'h00.", UVM_LOW)
             		reset_verified++;
         		end
-			else if (apb_data.PRDATA == 8'h00 && apb_data.PADDR == 3'b010) 
+			else 
 				begin
-					`uvm_info("SB_RESET_PASS", $sformatf("RESET VERIFIED: Baud Register at PADDR = %0h successfully cleared to 8'h00.", apb_data.PADDR), UVM_LOW)
-            		reset_verified++;
-				end
-			else if (apb_data.PRDATA == 8'h20 && apb_data.PADDR == 3'b011)
-				begin
-					`uvm_info("SB_RESET_PASS", $sformatf("RESET VERIFIED: Status Register at PADDR = %0h successfully cleared to 8'h20.", apb_data.PADDR), UVM_LOW)
-            		reset_verified++;
-				end
-			else if (apb_data.PRDATA == 8'h00 && apb_data.PADDR == 3'b101)
-				begin
-					`uvm_info("SB_RESET_PASS", $sformatf("RESET VERIFIED: Data Register at PADDR = %0h successfully cleared to 8'h00.", apb_data.PADDR), UVM_LOW)
-            		reset_verified++;
-				end
-        	else 
-				begin
-            		`uvm_error("SB_RESET_FAIL", $sformatf("RESET MISMATCH: Register at PADDR = %0h should be 8'h00 but read back as 8'h%0h!", apb_data.PADDR, apb_data.PRDATA))
+            		`uvm_error("SB_RESET_FAIL", $sformatf("RESET MISMATCH: Control Register 2 should be 8'h00 but read back as 8'h%0h!",reset_data))
         		end
+
+			//READING CONTENTS OF BAUD RATE REGISTER
+			spi_reg_blk.baud.read(r_status,reset_data,.path(UVM_BACKDOOR),.map(spi_reg_blk.spi_reg_map));
+			if (reset_data == 8'h00)
+				begin
+            		`uvm_info("SB_RESET_PASS", "RESET VERIFIED: Baud Register successfully cleared to 8'h00.", UVM_LOW)
+            		reset_verified++;
+        		end
+			else 
+				begin
+            		`uvm_error("SB_RESET_FAIL", $sformatf("RESET MISMATCH: Baud Register should be 8'h00 but read back as 8'h%0h!",reset_data))
+        		end
+
+			//READING CONTENTS OF STATUS REGISTER
+			spi_reg_blk.status.read(r_status,reset_data,.path(UVM_BACKDOOR),.map(spi_reg_blk.spi_reg_map));
+			if (reset_data == 8'h20)
+				begin
+            		`uvm_info("SB_RESET_PASS", "RESET VERIFIED: Status Register successfully cleared to 8'h20.", UVM_LOW)
+            		reset_verified++;
+        		end
+			else 
+				begin
+            		`uvm_error("SB_RESET_FAIL", $sformatf("RESET MISMATCH: Status Register should be 8'h20 but read back as 8'h%0h!",reset_data))
+        		end
+			
+			//READING CONTENTS OF DATA REGISTER
+			spi_reg_blk.data.read(r_status,reset_data,.path(UVM_BACKDOOR),.map(spi_reg_blk.spi_reg_map));
+			if (reset_data == 8'h00)
+				begin
+            		`uvm_info("SB_RESET_PASS", "RESET VERIFIED: Data Register successfully cleared to 8'h00.", UVM_LOW)
+            		reset_verified++;
+        		end
+			else 
+				begin
+            		`uvm_error("SB_RESET_FAIL", $sformatf("RESET MISMATCH: Data Register should be 8'h00 but read back as 8'h%0h!",reset_data))
+        		end
+
 		end
+
 	else //NORMAL TEST CHECK
 		begin
 		//MOSI DATA COMPARISION

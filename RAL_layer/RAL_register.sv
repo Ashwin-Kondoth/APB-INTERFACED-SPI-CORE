@@ -1,3 +1,7 @@
+/*======================================================================
+==============================REGISTER CLASS============================
+=======================================================================*/
+
 //CONTROL REGISTER 1
 class ctrl_reg_1 extends uvm_reg;
 	`uvm_object_utils(ctrl_reg_1)
@@ -18,8 +22,8 @@ class ctrl_reg_1 extends uvm_reg;
 	endfunction : new
 
 	function void build();
-	//create objects for the fields
-
+	
+		//create objects for the fields
 		LSBFE = uvm_reg_field::type_id::create("LSBFE");
 		SSOE  = uvm_reg_field::type_id::create("SSOE");
 		CPHA  = uvm_reg_field::type_id::create("CPHA");
@@ -127,10 +131,10 @@ class status_reg extends uvm_reg;
 
 	//Field declaration
 	     uvm_reg_field RESERVED1; //bit[0:3]
-	rand uvm_reg_field MODF;      //bit4
-	rand uvm_reg_field SPTEF;     //bit5
+	     uvm_reg_field MODF;      //bit4
+	     uvm_reg_field SPTEF;     //bit5
 	     uvm_reg_field RESERVED2; //bit6
-	rand uvm_reg_field SPIF;      //bit7
+	     uvm_reg_field SPIF;      //bit7
 
 
 	function new (string name = "status_reg");
@@ -149,10 +153,10 @@ class status_reg extends uvm_reg;
 	//Configure the fields
 	//                  	parent  size  position  access  volatile  reset_val  has_reset  is_rand  bit_accessibility
 		RESERVED1.configure( this,   4,      0,      "RO"	  ,0	    ,4'b0	   ,0	     ,0	    	   ,0);
-		MODF.configure( 	 this,   1,      4,      "RW"     ,0        ,1'b0      ,1        ,1            ,1);
-		SPTEF.configure(   	 this,	 1,	     5,		 "RW"	  ,0		,1'b1	   ,1		 ,1			   ,1);
+		MODF.configure( 	 this,   1,      4,      "RO"     ,0        ,1'b0      ,1        ,0            ,1);
+		SPTEF.configure(   	 this,	 1,	     5,		 "RO"	  ,0		,1'b1	   ,1		 ,1			   ,1);
 		RESERVED2.configure( this,	 1,		 6,		 "RO"	  ,0		,1'b0	   ,0		 ,0			   ,0);
-		SPIF.configure( 	 this,   1,      7,      "RW"     ,0        ,1'b0      ,1        ,1            ,1);
+		SPIF.configure( 	 this,   1,      7,      "RO"     ,0        ,1'b0      ,1        ,0            ,1);
 
 	endfunction : build
 

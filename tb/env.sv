@@ -4,10 +4,11 @@
 class core_env extends uvm_env;
 	`uvm_component_utils(core_env)
 
-	apb_agent_top   apb_top;
-	spi_agent_top   spi_top;
-	core_sb         sbh[];
-	env_config      cfg;
+	apb_agent_top     apb_top;
+	spi_agent_top     spi_top;
+	core_sb           sbh[];
+	virtual_sequencer virt_seqr;
+	env_config        cfg;
 
 	function new(string name = "core_env",uvm_component parent);
 		super.new(name,parent);
@@ -33,6 +34,13 @@ function void core_env::build_phase(uvm_phase phase);
 			for(int i = 0; i < cfg.num_of_apb_agents; i++)
 				sbh[i] = core_sb::type_id::create($sformatf("sbh[%0d]",i),this);
 		end
+	if(cfg.has_virtual_sequencer)
+		begin
+			virt_seqr          = virtual_sequencer::type_id::create("virt_seqr",this);
+			virt_seqr.apb_seqr = new[cfg.num_of_apb_agents];
+			virt_seqr.spi_seqr = new[cfg.num_of_spi_agents];
+		end
+
 endfunction : build_phase
 
 function void core_env::connect_phase(uvm_phase phase);
@@ -44,4 +52,12 @@ function void core_env::connect_phase(uvm_phase phase);
 	if(cfg.has_spi_agent)
 		for(int i = 0; i < cfg.num_of_spi_agents; i++)
 			spi_top.spi_agth[i].monh.monitor_port.connect(sbh[i].spi_fifo.analysis_export);
+	if(cfg.has_virtual_sequencer)
+		begin
+			for(int i = 0; i < cfg.num_of_apb_agents; i++)
+				virt_seqr.apb_seqr[i] = apb_top.apb_agth[i].seqrh;
+			for(int i = 0; i < cfg.num_of_spi_agents; i++)
+				virt_seqr.spi_seqr[i] = apb_top.spi_agth[i].seqrh;
+		end
+
 endfunction : connect_phase

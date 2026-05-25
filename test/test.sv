@@ -19,8 +19,10 @@ class base_test extends uvm_test;
 	bit 						has_scoreboard = 1;
 	bit 						has_virtual_sequencer = 1;
 
+	//Environment handle
 	core_env 					envh;
 	
+	//virtual sequence handles
 	virtual_apb_reset_sequence  apb_reset_seq;
 	virtual_apb_write_sequence  apb_wr_seq;
 	virtual_apb_read_sequence   apb_rd_seq;
@@ -69,6 +71,7 @@ function void base_test::build_phase(uvm_phase phase);
 		end
 	config_env();
 	
+	//creating object for virtual sequences
 	apb_reset_seq = virtual_apb_reset_sequence::type_id::create("apb_reset_seq");
 	apb_wr_seq 	  = virtual_apb_write_sequence::type_id::create("apb_wr_seq");
 	apb_rd_seq    = virtual_apb_read_sequence::type_id::create("apb_rd_seq");
@@ -519,11 +522,6 @@ class corner_test extends base_test;
 	
 	bit [7:0] CR1 = 8'b11111111;
 	bit [7:0] CR2 = 8'b00010000;
-
-	apb_reset_sequence apb_reset_seq;
-	apb_write_sequence apb_wr_seq;
-	apb_read_sequence  apb_rd_seq;
-	spi_write_sequence spi_wr_seq;
 	
 	function new(string name = "corner_test",uvm_component parent);
 		super.new(name,parent);
@@ -538,11 +536,6 @@ function void corner_test::build_phase(uvm_phase phase);
 	super.build_phase(phase);
 	uvm_config_db #(bit[7:0])::set(this,"*","CR1",CR1);
 	uvm_config_db #(bit[7:0])::set(this,"*","CR2",CR2);
-	
-	apb_reset_seq = apb_reset_sequence::type_id::create("apb_reset_seq");
-	apb_wr_seq    = apb_write_sequence::type_id::create("apb_wr_seq");
-	apb_rd_seq 	  = apb_read_sequence::type_id::create("apb_rd_seq");
-	spi_wr_seq    = spi_write_sequence::type_id::create("spi_wr_seq");
 
 endfunction : build_phase
 
@@ -553,16 +546,12 @@ endfunction : end_of_elaboration_phase
 task corner_test::run_phase(uvm_phase phase);
 	phase.raise_objection(this);
 	//Change clock period to 5, PCLK freq = 200Mhz
-		for(int i = 0;i < cfg.num_of_apb_agents;i++)
+		for(int j =0; j< 100; j++)
 			begin
-				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
-				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);	 //APB WRITE SEQ
-				//CHECK IF DR WRITE IS ZERO
-				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
-					begin
-						spi_wr_seq.start(envh.spi_top.spi_agth[i].seqrh); //SPI WRITE SEQ
-						apb_rd_seq.start(envh.apb_top.apb_agth[i].seqrh); //APB READ SEQ
-					end
+				apb_reset_seq.start(envh.virt_seqr); //RESET SEQ
+				apb_wr_seq.start(envh.virt_seqr);	 //APB WRITE SEQ
+				spi_wr_seq.start(envh.virt_seqr); //SPI WRITE SEQ
+				apb_rd_seq.start(envh.virt_seqr); //APB READ SEQ
 			end
 			//phase.phase_done.set_drain_time(this,250);
 	phase.drop_objection(this);

@@ -236,6 +236,7 @@ task core_sb::compare_data;
 				end
 			else
 				`uvm_error("SB:",$sformatf("MISO DATA MISMATCH. SENT DATA = %0h, RECEIVED DATA = %0h",spi_data.miso,apb_data.PRDATA))
+
 		end
 endtask : compare_data
 

@@ -53,7 +53,7 @@ always @(posedge PCLK or negedge PRESET_n)
 begin
 	if (!PRESET_n)
 		sclk_o <= Presclk;
-	else if (!ss_i && !spiswai_i && (spi_mode_i == RUN || spi_mode_i == WAIT))
+	else if (!ss_i && (spi_mode_i == RUN || (spi_mode_i == WAIT && !spiswai_i)))
 	begin
 		if (count == ((BaudRateDivisor_o / 2) /*Calculating for both positive and negative cycle*/ - 1'b1))
 			sclk_o <= ~sclk_o; //toggling sclk
@@ -69,7 +69,7 @@ always @(posedge PCLK or negedge PRESET_n)
 begin
 	if (!PRESET_n)
 		count <= 12'b0;
-	else if (!ss_i && !spiswai_i && (spi_mode_i == RUN || spi_mode_i == WAIT))
+	else if (!ss_i && (spi_mode_i == RUN || (spi_mode_i == WAIT && !spiswai_i)))
 	begin
 		if (count == ((BaudRateDivisor_o / 2) - 1'b1))
 			count <= 12'b0; //reset the count after counting the last value

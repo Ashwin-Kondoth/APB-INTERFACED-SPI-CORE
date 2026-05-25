@@ -6,12 +6,12 @@ class spi_monitor extends uvm_monitor;
 	
 	uvm_analysis_port #(spi_xtn) monitor_port;
 	
-	spi_agent_config cfg;
-	virtual spi_if vif;
-	bit[7:0] CR1;
-	bit cpol;
-	bit cpha;
-	bit lsb;
+	spi_agent_config 			 cfg;
+	virtual spi_if 				 vif;
+	bit              [7:0] 		 CR1;
+	bit 					     cpol;
+	bit 						 cpha;
+	bit 					     lsb;
 
 	function new(string name = "spi_monitor",uvm_component parent);
 		super.new(name,parent);

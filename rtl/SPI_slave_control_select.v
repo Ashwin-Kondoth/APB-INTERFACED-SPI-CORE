@@ -59,7 +59,7 @@ always @(posedge PCLK or negedge PRESET_n)
 begin
 	if(!PRESET_n)
 		ss_o <= 1'b1;
-	else if(!spiswai_i && mstr_i && (spi_mode_i == RUN || spi_mode_i == WAIT))
+	else if(mstr_i && (spi_mode_i == RUN || (spi_mode_i == WAIT && !spiswai_i)))
 	begin
 		if(send_data_i)
 			ss_o <= 1'b0;
@@ -80,7 +80,7 @@ always @(posedge PCLK or negedge PRESET_n)
 begin
 	if(!PRESET_n)
 		count <= 16'hffff;
-	else if(!spiswai_i && mstr_i && (spi_mode_i == RUN || spi_mode_i == WAIT))
+	else if(mstr_i && (spi_mode_i == RUN || (spi_mode_i == WAIT && !spiswai_i)))
 	begin
 		if(send_data_i) 
 			count <= 16'b0;
@@ -102,7 +102,7 @@ always @(posedge PCLK or negedge PRESET_n)
 begin
 	if(!PRESET_n)
 		rcv <= 1'b0;
-	else if(!spiswai_i && mstr_i && (spi_mode_i == RUN || spi_mode_i == WAIT))
+	else if(mstr_i && (spi_mode_i == RUN || (spi_mode_i == WAIT && !spiswai_i)))
 	begin
 		if(send_data_i)
 			rcv <= 1'b0;  

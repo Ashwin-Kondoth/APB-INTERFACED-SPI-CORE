@@ -107,7 +107,7 @@ class cpha1_cpol1_lsb_test extends base_test;
 	`uvm_component_utils(cpha1_cpol1_lsb_test)
 	
 	bit [7:0] CR1 = 8'b11111111;
-	bit [7:0] CR2 = 8'b00010000;
+	bit [7:0] CR2 = 8'b00010010;
 	
 	function new(string name = "cpha1_cpol1_lsb_test",uvm_component parent);
 		super.new(name,parent);

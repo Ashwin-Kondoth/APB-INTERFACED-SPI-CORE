@@ -57,7 +57,7 @@ function void core_env::connect_phase(uvm_phase phase);
 			for(int i = 0; i < cfg.num_of_apb_agents; i++)
 				virt_seqr.apb_seqr[i] = apb_top.apb_agth[i].seqrh;
 			for(int i = 0; i < cfg.num_of_spi_agents; i++)
-				virt_seqr.spi_seqr[i] = apb_top.spi_agth[i].seqrh;
+				virt_seqr.spi_seqr[i] = spi_top.spi_agth[i].seqrh;
 		end
 
 endfunction : connect_phase

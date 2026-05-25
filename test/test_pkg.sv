@@ -22,6 +22,8 @@ package test_pkg;
 	`include "SPI_monitor.sv"
 	`include "SPI_agent.sv"
 	`include "SPI_agent_top.sv"
+	`include "virtual_sequencer.sv"
+	`include "virtual_sequence.sv"
 	`include "core_sb.sv"
 	`include "env.sv"
 	`include "test.sv"

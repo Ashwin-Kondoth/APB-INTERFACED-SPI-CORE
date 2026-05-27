@@ -73,34 +73,12 @@ function void core_sb::build_phase(uvm_phase phase);
 			is_reset_test      = 1'b0;
 			reset_has_occurred = 1'b0;
 		end
-	if (!uvm_config_db#(bit)::get(this,"","low_power_test", is_low_power_test))
-            is_low_power_test  = 1'b0;
 		
 endfunction : build_phase
 
 task core_sb::run_phase(uvm_phase phase);
-	if(is_low_power_test) // LOW POWER TEST CASE
-		begin
-			//---------------------------------------------------------
-        	// LOW POWER VERIFICATION CODE
-        	//---------------------------------------------------------
-			fork
-				//Monitor for accidental SPI activity
-				begin //THREAD 1
-					spi_fifo.get(spi_data);
-					`uvm_error("LOW_PWR_FAIL", "Protocol Violation! SPI generated traffic/SS while in low power stop mode!")
-				end
-				
-				// Safe Watchdog Timeout Window
-				begin //THREAD 2
-					#200000; // Must match or be slightly shorter than the sequence delay window
-					`uvm_info("LOW_PWR_PASS", "SUCCESS: SPI stayed in Stop Mode. No SS or clock transitions detected.", UVM_LOW)
-				end
-			join_any
-			disable fork;
-		end
-	else //NORMAL and RESET TEST CASE
-		begin
+	
+	 		//NORMAL and RESET TEST CASE
 			fork
 				begin //THREAD1
 					forever 
@@ -113,6 +91,8 @@ task core_sb::run_phase(uvm_phase phase);
 				begin //THREAD2
 					forever 
 						begin
+							if (!uvm_config_db#(bit)::get(this,"","low_power_test", is_low_power_test))
+            					is_low_power_test  = 1'b0;
 							apb_fifo.get(apb_data);
 							apb_cov_data = new apb_data;
 							cg_apb.sample();
@@ -130,12 +110,31 @@ task core_sb::run_phase(uvm_phase phase);
 									`uvm_info("SB_SKIP", "Detected data register write of 8'h00. Skipping comparison pipeline.", UVM_LOW)
 									continue;
 								end
+							if(is_low_power_test) //FOR LOW POWER TEST CASE
+								begin
+									//---------------------------------------------------------
+									// LOW POWER VERIFICATION CODE
+									//---------------------------------------------------------
+									fork
+										//Monitor for accidental SPI activity
+										begin //THREAD 1
+											spi_fifo.get(spi_data);
+											`uvm_error("LOW_PWR_FAIL", "Protocol Violation! SPI generated traffic/SS while in low power stop mode!")
+										end
+										
+										// Safe Watchdog Timeout Window
+										begin //THREAD 2
+											#200000; // Must match or be slightly shorter than the sequence delay window
+											`uvm_info("LOW_PWR_PASS", "SUCCESS: SPI stayed in Stop Mode. No SS or clock transitions detected.", UVM_LOW)
+										end
+									join_any
+									disable fork;
+								end
 							if(apb_data.PWRITE == 0) //NORMAL CASE
 								compare_data;
 						end	
 				end
 			join
-		end
 endtask : run_phase
 
 task core_sb::compare_data;

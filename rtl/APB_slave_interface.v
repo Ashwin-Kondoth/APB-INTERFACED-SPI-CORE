@@ -296,9 +296,9 @@ begin
 		spi_next_state = RUN;
 	end
 	WAIT: begin
-	if(SPE)
+		if(SPE && !spiswai_o)
 		spi_next_state = RUN;
-	else if(!spiswai_o)
+		else if(SPE && spiswai_o)
 		spi_next_state = RUN;
 	else if(spiswai_o)
 		spi_next_state = STOP;

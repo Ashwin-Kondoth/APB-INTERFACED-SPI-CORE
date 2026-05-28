@@ -127,7 +127,7 @@ endfunction : end_of_elaboration_phase
 
 task cpha1_cpol1_lsb_test::run_phase(uvm_phase phase);
 	phase.raise_objection(this);
-		for(int j =0; j< 100; j++)
+		//for(int j =0; j< 100; j++)
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ

@@ -12,7 +12,7 @@ module top;
 	bit 	  clock; 		 //System clock
 	int       count  = 1;
 	apb_if    APB_IF(clock); //APB INTERFACE
-	spi_if    SPI_IF();      //SPI INTERFACE
+	spi_if    SPI_IF(clock,APB_IF.PRESET_n);      //SPI INTERFACE
 
 //DUT INSTANTIATION
 	APB_interfaced_SPI DUV(.PCLK(APB_IF.PCLK),

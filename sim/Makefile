@@ -15,17 +15,17 @@ SVTB2 = ../test/test_pkg.sv
 VSIMOPT= -vopt -voptargs="+acc -assertdebug"
 VSIMCOV= -coverage -sva 
 
-VSIMBATCH=  -c -do "log -r /*; assertion log -recursive /top/*; coverage save -onexit cov0;  run -all; exit"
-VSIMBATCH1= -c -do "log -r /*; assertion log -recursive /top/*; coverage save -onexit cov1;  run -all; exit"
-VSIMBATCH2= -c -do "log -r /*; assertion log -recursive /top/*; coverage save -onexit cov2;  run -all; exit"
-VSIMBATCH3= -c -do "log -r /*; assertion log -recursive /top/*; coverage save -onexit cov3;  run -all; exit"
-VSIMBATCH4= -c -do "log -r /*; assertion log -recursive /top/*; coverage save -onexit cov4;  run -all; exit"
-VSIMBATCH5= -c -do "log -r /*; assertion log -recursive /top/*; coverage save -onexit cov5;  run -all; exit"
-VSIMBATCH6= -c -do "log -r /*; assertion log -recursive /top/*; coverage save -onexit cov6;  run -all; exit"
-VSIMBATCH7= -c -do "log -r /*; assertion log -recursive /top/*; coverage save -onexit cov7;  run -all; exit"
-VSIMBATCH8= -c -do "log -r /*; assertion log -recursive /top/*; coverage save -onexit cov8;  run -all; exit"
-VSIMBATCH9= -c -do "log -r /*; assertion log -recursive /top/*; coverage save -onexit cov9;  run -all; exit"
-VSIMBATCH10=-c -do "log -r /*; assertion log -recursive /top/*; coverage save -onexit cov10; run -all; exit"
+VSIMBATCH = -c -do "log -r /*; assertion pass -recursive /top/*; assertion fail -recursive /top/*; coverage save -onexit cov; run -all; exit"
+VSIMBATCH1= -c -do "log -r /*; assertion pass -recursive /top/*; assertion fail -recursive /top/*; coverage save -onexit cov1; run -all; exit"
+VSIMBATCH2= -c -do "log -r /*; assertion pass -recursive /top/*; assertion fail -recursive /top/*; coverage save -onexit cov2; run -all; exit"
+VSIMBATCH3= -c -do "log -r /*; assertion pass -recursive /top/*; assertion fail -recursive /top/*; coverage save -onexit cov3; run -all; exit"
+VSIMBATCH4= -c -do "log -r /*; assertion pass -recursive /top/*; assertion fail -recursive /top/*; coverage save -onexit cov4; run -all; exit"
+VSIMBATCH5= -c -do "log -r /*; assertion pass -recursive /top/*; assertion fail -recursive /top/*; coverage save -onexit cov5; run -all; exit"
+VSIMBATCH6= -c -do "log -r /*; assertion pass -recursive /top/*; assertion fail -recursive /top/*; coverage save -onexit cov6; run -all; exit"
+VSIMBATCH7= -c -do "log -r /*; assertion pass -recursive /top/*; assertion fail -recursive /top/*; coverage save -onexit cov7; run -all; exit"
+VSIMBATCH8= -c -do "log -r /*; assertion pass -recursive /top/*; assertion fail -recursive /top/*; coverage save -onexit cov8; run -all; exit"
+VSIMBATCH9= -c -do "log -r /*; assertion pass -recursive /top/*; assertion fail -recursive /top/*; coverage save -onexit cov9; run -all; exit"
+VSIMBATCH10= -c -do "log -r /*; assertion pass -recursive /top/*; assertion fail -recursive /top/*; coverage save -onexit cov10; run -all; exit"
 
 help:
 	@echo =============================================================================================================
@@ -58,7 +58,7 @@ view_wave4 : view_wave4_$(SIMULATOR)
 sv_cmp_Questa:
 	vlib $(work)
 	vmap work $(work)
-	vlog -work $(work) $(RTL) $(INC) $(SVTB2) $(SVTB1) 	
+	vlog -work $(work) -cover sbcef $(RTL) $(INC) $(SVTB2) $(SVTB1) 	
 
 run_ct_Questa: clean sv_cmp_Questa
 	vsim -cvgperinstance $(VSIMOPT) $(VSIMCOV) $(VSIMBATCH10)  -wlf wave_ct.wlf -l ct_test.log  -sv_seed random work.top +UVM_TESTNAME=corner_test

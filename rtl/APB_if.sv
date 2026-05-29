@@ -50,7 +50,7 @@ interface apb_if (input bit clock);
 	endproperty : PENABLE_stable
 
 	property PREADY_check;
-		@(posedge clock) $rose(PSEL) && $rose(PENABLE) |=> PREADY;
+		@(posedge clock) (PSEL) && (PENABLE) |=> PREADY;
 	endproperty : PREADY_check
 
 	property address_reserved;
@@ -62,19 +62,19 @@ interface apb_if (input bit clock);
 	endproperty : PENABLE_deassert
 
 	property valid_write_data_transfer;
-		@(posedge clock) $rose(PREADY) && PWRITE |=> (PWDATA != 8'h00);
+		@(posedge clock) $rose(PREADY) && PWRITE && PADDR == 3'b101 |=> (PWDATA != 8'h00);
 	endproperty : valid_write_data_transfer
 
 	property valid_read_data_transfer;
-		@(posedge clock) $rose(PREADY) && !PWRITE |=> (PRDATA != 8'h00);
+		@(posedge clock) $rose(PREADY) && !PWRITE && PADDR == 3'b101 |=> (PRDATA != 8'h00);
 	endproperty : valid_read_data_transfer
 
 	property PREADY_low_at_start;
-		@(posedge clock) $rose(PSEL) && !PENABLE |-> (!PREADY);
+		@(posedge clock) PSEL && !PENABLE |-> (!PREADY);
 	endproperty : PREADY_low_at_start
 
 	property PREADY_deassert;
-		@(posedge clock) $fell(PSEL && PENABLE) |=> (!PREADY);
+		@(posedge clock) (!PSEL && !PENABLE && PREADY) |=> (!PREADY);
 	endproperty : PREADY_deassert
 
 	SIGNAL_STABLE:	assert property(signal_stable)
@@ -121,5 +121,15 @@ interface apb_if (input bit clock);
 						$info("PREADY DEASSERTION is verified");
 					else
 						$error("PREADY DEASSERTION is not verified");
+
+	SIGNAL_STABLE_COVER:	cover property(signal_stable);
+	PENABLE_STABLE_COVER: cover property(PENABLE_stable);
+	PSEL_TO_PREADY_COVER: cover property(PREADY_check);
+	ADDRESS_RESERVED_COVER: cover property(address_reserved);
+	PENABLE_DEASSERT_COVER: cover property(PENABLE_deassert);
+	WRITE_TRANSFER_COVER:	cover property(valid_write_data_transfer);
+	READ_TRANSFER_COVER:	cover property(valid_read_data_transfer);
+	PREADY_LOW_AT_START_COVER: cover property(PREADY_low_at_start);
+	PREADY_DEASSERT_COVER: cover property(PREADY_deassert);
 
 endinterface : apb_if

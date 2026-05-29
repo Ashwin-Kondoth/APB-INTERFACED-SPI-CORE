@@ -42,7 +42,7 @@ end
 always @(posedge PCLK or negedge PRESET_n) begin
     if (!PRESET_n) begin
         shift_reg_tx <= 8'b0;
-        mosi_o       <= 1'b0;
+        mosi_o       <= 1'bx;
     end 
     else if (send_data_i) begin
         shift_reg_tx <= data_mosi_i;
@@ -82,7 +82,7 @@ always @(posedge PCLK or negedge PRESET_n) begin
 			end
     end 
     else begin
-        mosi_o <= 1'b0;
+        mosi_o <= 1'bx;
     end
 end
 

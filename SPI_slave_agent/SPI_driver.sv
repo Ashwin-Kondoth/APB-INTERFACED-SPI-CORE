@@ -40,7 +40,7 @@ endfunction : connect_phase
 
 task spi_driver::run_phase(uvm_phase phase);
 	super.run_phase(phase);
-	vif.miso <= '0;
+	//vif.miso <= '0;
 	forever
 		begin
 			seq_item_port.get_next_item(req);

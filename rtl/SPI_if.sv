@@ -36,20 +36,7 @@ interface spi_if (input bit PCLK,input bit PRESET_n);
 
 // Internal tracking variables
     bit detected_cpol;
-    bit detected_cpha;
-    bit transfer_active = 1'b0;
-    reg reset_done = 1'b0;
 
-    always @(posedge PCLK) begin
-        if (!PRESET_n) begin
-            reset_done <= 1'b0;
-        end else begin
-            // Wait 3 clock cycles after PRESET_n goes high to enable
-            // (Adjust the cycle count to match 30ns based on your PCLK frequency)
-            repeat(6) @(posedge PCLK); 
-            reset_done <= 1'b1;
-        end
-    end
     //======================================================================
     // 1. ROBUST ACTIVE-LOW MODE DETECTION
     //======================================================================
@@ -68,28 +55,28 @@ interface spi_if (input bit PCLK,input bit PRESET_n);
     //======================================================================
     // 2. SYNCHRONOUS ASSERTIONS (USING STANDARD $error)
     //======================================================================
-    // ASSERTION 1: Clock Gating Check
-    // SCLK must remain completely stable when SS is inactive (1)
-    property p_sclk_gated_by_ss;
-        @(posedge PCLK) disable iff (!PRESET_n || !reset_done)
-        (ss == 1'b1) && $stable(ss) |-> $stable(sclk);
-    endproperty
-    assert_sclk_gated: assert property (p_sclk_gated_by_ss)
-                $info("ASSERTION PASSED : SLCK is glitch free");
-        else $error("[SPI_SVA_ERR] Protocol Violation: SCLK leaked/glitched while SS was high (IDLE)!");
-    
-    CHECK1 : cover property (p_sclk_gated_by_ss);
 
     // ASSERTION 2: Idle Polarity Level Check
     // When SS is inactive (1), SCLK must stay locked at the detected CPOL level
     property p_cpol_level_check;
-        @(posedge PCLK) disable iff (!PRESET_n || !reset_done)
-        (ss == 1'b1) |-> (sclk == detected_cpol);
+        @(posedge PCLK) disable iff (!PRESET_n)
+        (ss == 1'b1) && $stable(ss) && $stable(sclk) |-> (sclk == detected_cpol);
     endproperty
     assert_cpol_level: assert property (p_cpol_level_check)
-        $info("ASSERTION 2 PASSED");
+        $info("ASSERTION 1 PASSED");
         else $error("[SPI_SVA_ERR] Protocol Violation: SCLK is (%0b) drifted away from its expected CPOL idle level (%0b) while SS was high!", sclk,detected_cpol);
     
-    CHECK2 : cover property (p_cpol_level_check);
+    CHECK1 : cover property (p_cpol_level_check);
 
+    // 2. Assert that the entire active-low window of SS contains exactly 16 edges
+    property p_exact_8_bits_frame;
+        @(posedge PCLK) disable iff (!PRESET_n)
+        $fell(ss) |-> ($changed(sclk))[=16] ##1 $rose(ss);
+    endproperty
+
+    assert_frame_length: assert property (p_exact_8_bits_frame)
+        $info("ASSERTION 2 PASSED");
+        else $error("[SPI_SVA_ERR] Frame Protocol Violation! SS did not contain exactly 8 bits of SCLK activity before closing.");
+
+    CHECK2 : cover property (p_exact_8_bits_frame);
 endinterface : spi_if

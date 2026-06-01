@@ -16,7 +16,8 @@ class apb_xtn extends uvm_sequence_item;
 	     bit       PSLVERR;
 
     constraint apb_con {PADDR inside {[0:3],5};
-                        PRESET_n dist {0:=1, 1:=9};}
+                        PRESET_n dist {0:=1, 1:=9};
+						PWDATA inside {[1:255]};}
     
     function new (string name = "apb_xtn");
         super.new(name);

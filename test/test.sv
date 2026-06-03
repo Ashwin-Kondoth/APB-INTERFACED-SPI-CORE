@@ -136,6 +136,8 @@ task cpha1_cpol1_lsb_test::run_phase(uvm_phase phase);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				if(!apb_wr_seq.randomize())
+					`uvm_fatal("TEST","RANDOMIZATION FAILED")
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);	 //APB WRITE SEQ
 				//CHECK IF DR WRITE IS ZERO
 				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
@@ -191,6 +193,8 @@ task cpha0_cpol0_lsb_test::run_phase(uvm_phase phase);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				if(!apb_wr_seq.randomize())
+					`uvm_fatal("TEST","RANDOMIZATION FAILED")
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);    //APB WRITE SEQ
 				//CHECK IF DR WRITE IS ZERO
 				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
@@ -246,6 +250,8 @@ task cpha1_cpol0_lsb_test::run_phase(uvm_phase phase);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				if(!apb_wr_seq.randomize())
+					`uvm_fatal("TEST","RANDOMIZATION FAILED")
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);    //APB WRITE SEQ
 				//CHECK IF DR WRITE IS ZERO
 				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
@@ -301,6 +307,8 @@ task cpha0_cpol1_lsb_test::run_phase(uvm_phase phase);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				if(!apb_wr_seq.randomize())
+					`uvm_fatal("TEST","RANDOMIZATION FAILED")
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);    //APB WRITE SEQ
 				//CHECK IF DR WRITE IS ZERO
 				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
@@ -356,6 +364,8 @@ task cpha1_cpol1_msb_test::run_phase(uvm_phase phase);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				if(!apb_wr_seq.randomize())
+					`uvm_fatal("TEST","RANDOMIZATION FAILED")
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);    //APB WRITE SEQ
 				//CHECK IF DR WRITE IS ZERO
 				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
@@ -411,6 +421,8 @@ task cpha0_cpol0_msb_test::run_phase(uvm_phase phase);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				if(!apb_wr_seq.randomize())
+					`uvm_fatal("TEST","RANDOMIZATION FAILED")
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);    //APB WRITE SEQ
 				//CHECK IF DR WRITE IS ZERO
 				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
@@ -466,6 +478,8 @@ task cpha1_cpol0_msb_test::run_phase(uvm_phase phase);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				if(!apb_wr_seq.randomize())
+					`uvm_fatal("TEST","RANDOMIZATION FAILED")
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);    //APB WRITE SEQ
 				//CHECK IF DR WRITE IS ZERO
 				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
@@ -521,6 +535,8 @@ task cpha0_cpol1_msb_test::run_phase(uvm_phase phase);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				if(!apb_wr_seq.randomize())
+					`uvm_fatal("TEST","RANDOMIZATION FAILED")
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);    //APB WRITE SEQ
 				//CHECK IF DR WRITE IS ZERO
 				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))
@@ -575,6 +591,8 @@ task reset_test::run_phase(uvm_phase phase);
 	phase.raise_objection(this);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
+				if(!apb_wr_seq.randomize())
+					`uvm_fatal("TEST","RANDOMIZATION FAILED")
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);   //APB WRITE SEQ
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh);//RESET SEQ
 			end
@@ -622,6 +640,8 @@ task low_power_test::run_phase(uvm_phase phase);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				if(!apb_wr_seq.randomize())
+					`uvm_fatal("TEST","RANDOMIZATION FAILED")
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);    //APB WRITE SEQ
 			end
 			phase.phase_done.set_drain_time(this, 200000); //WAIT for Scoreboard to complete
@@ -672,6 +692,8 @@ task corner_test::run_phase(uvm_phase phase);
 		for(int i = 0;i < cfg.num_of_apb_agents;i++)
 			begin
 				apb_reset_seq.start(envh.apb_top.apb_agth[i].seqrh); //RESET SEQ
+				if(!apb_wr_seq.randomize())
+					`uvm_fatal("TEST","RANDOMIZATION FAILED")
 				apb_wr_seq.start(envh.apb_top.apb_agth[i].seqrh);	 //APB WRITE SEQ
 				//CHECK IF DR WRITE IS ZERO
 				if((envh.apb_top.apb_agth[i].drvh.req.PADDR == 3'b101) && (envh.apb_top.apb_agth[i].drvh.req.PWDATA != 8'h00))

@@ -15,7 +15,7 @@ class spi_reg_block extends uvm_reg_block;
 	rand data_reg   data;
 
 	function new (string name = "spi_reg_block");
-		super.new(name,build_coverage (UVM_CVR_ALL));
+		super.new(name);
 	endfunction : new
 
 	function void build();

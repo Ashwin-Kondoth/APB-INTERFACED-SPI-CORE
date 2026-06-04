@@ -21,6 +21,8 @@ class core_sb extends uvm_scoreboard;
 
 	bit 							 is_low_power_test 	  = 1'b0;
 
+	bit [7:0]						 CR1;
+	bit [7:0]						 CR2;
 	env_config						 cfg;
 
 	//REGISTER BLOCK LOCAL HANDLE
@@ -83,6 +85,12 @@ function void core_sb::build_phase(uvm_phase phase);
 
 	if (!uvm_config_db#(bit)::get(this,"","low_power_test", is_low_power_test))
             is_low_power_test  = 1'b0;
+
+	if(!uvm_config_db #(bit[7:0])::get(this,"","CR1",CR1))
+        `uvm_fatal("APB_SEQ","get failed for CR1 !!")
+
+    if(!uvm_config_db #(bit[7:0])::get(this,"","CR2",CR2))
+        `uvm_fatal("APB_SEQ","get failed for CR2 !!")
 		
 endfunction : build_phase
 
@@ -220,6 +228,7 @@ task core_sb::compare_data;
 	else //NORMAL TEST CHECK
 		begin
 		//MOSI DATA COMPARISION
+		bit [7:0] data_check;
 			if(apb_data.PWDATA == spi_data.mosi)
 				begin
 					`uvm_info("SB:",$sformatf("MOSI DATA COMPARED SUCCESSFULLY. SENT DATA = %0h, RECEIVED DATA = %0h",apb_data.PWDATA,spi_data.mosi),UVM_LOW)
@@ -236,6 +245,31 @@ task core_sb::compare_data;
 				end
 			else
 				`uvm_error("SB:",$sformatf("MISO DATA MISMATCH. SENT DATA = %0h, RECEIVED DATA = %0h",spi_data.miso,apb_data.PRDATA))
+			
+			
+			spi_reg_blk.cr1.read(r_status,data_check,.path(UVM_BACKDOOR),.map(spi_reg_blk.spi_reg_map));
+
+		//CR1 DATA COMPARISION
+			if(data_check == CR1)
+				begin
+					`uvm_info("SB:",$sformatf("CR1 DATA COMPARED SUCCESSFULLY. CR1 DATA = %0h, RAL DATA = %0h",CR1,data_check),UVM_LOW)
+				end
+			else
+				begin
+					`uvm_error("SB:",$sformatf("CR1 DATA MISMATCH. CR1 DATA = %0h, RAL DATA = %0h",CR1,data_check))
+				end
+
+			spi_reg_blk.cr2.read(r_status,data_check,.path(UVM_BACKDOOR),.map(spi_reg_blk.spi_reg_map));
+	
+		//CR2 DATA COMPARISION
+			if(data_check == CR2)
+				begin
+					`uvm_info("SB:",$sformatf("CR2 DATA COMPARED SUCCESSFULLY. CR2 DATA = %0h, RAL DATA = %0h",CR2,data_check),UVM_LOW)
+				end
+			else
+				begin
+					`uvm_error("SB:",$sformatf("CR1 DATA MISMATCH. CR2 DATA = %0h, RAL DATA = %0h",CR2,data_check))
+				end
 
 		end
 endtask : compare_data
